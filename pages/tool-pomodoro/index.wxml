@@ -1,0 +1,42 @@
+<view class="container theme-{{theme}}">
+  <quota-bar free="{{true}}" />
+
+  <view class="card">
+    <view class="card-title">预设节奏</view>
+    <view class="tag-row">
+      <view
+        class="tag {{preset === item.key ? 'active' : ''}}"
+        wx:for="{{presets}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onPreset"
+      >{{item.name}} {{item.work}}/{{item.rest}}</view>
+    </view>
+  </view>
+
+  <view class="card timer-card">
+    <view class="phase-chip phase-{{phase}}">{{phaseText}}</view>
+    <view class="timer-text">{{timeText}}</view>
+    <view class="progress-track">
+      <view class="progress-fill" style="width: {{progress}}%;"></view>
+    </view>
+    <view class="meta-row">
+      <text>已完成 {{doneRounds}} 个番茄</text>
+      <text>{{workMin}} 分专注 · {{restMin}} 分休息</text>
+    </view>
+  </view>
+
+  <view class="btn-row">
+    <button class="btn-primary flex-1" wx:if="{{!running}}" bindtap="onStart">{{remainSec === totalSec ? '开始' : '继续'}}</button>
+    <button class="btn-primary flex-1" wx:else bindtap="onPause">暂停</button>
+    <button class="btn-ghost flex-1" bindtap="onReset">重置</button>
+  </view>
+  <button class="btn-ghost" style="margin-top: 16rpx; width: 100%;" bindtap="skipPhase" wx:if="{{!running}}">跳过本阶段</button>
+
+  <view class="card tip-card">
+    <view class="card-title">使用提示</view>
+    <view class="section-tip" style="margin: 0;">保持屏幕常亮可避免后台节流；本工具纯本地计时，不消耗每日次数。</view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

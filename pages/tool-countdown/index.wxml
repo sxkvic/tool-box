@@ -1,0 +1,31 @@
+<view class="container theme-{{theme}}">
+  <quota-bar free="{{true}}" />
+
+  <view class="card">
+    <view class="card-title">新增纪念日</view>
+    <input class="input" placeholder="例如：发工资 / 生日 / 考试" value="{{title}}" bindinput="onTitle" />
+    <picker mode="date" value="{{date}}" bindchange="onDate">
+      <view class="picker-value" style="margin-top: 16rpx;">{{date || '选择日期'}} ▾</view>
+    </picker>
+    <button class="btn-primary" bindtap="onAdd">添加</button>
+  </view>
+
+  <view class="card" wx:if="{{!empty}}">
+    <view class="card-title">我的倒计时 · {{items.length}}</view>
+    <view class="cd-item status-{{item.status}}" wx:for="{{items}}" wx:key="id">
+      <view class="cd-badge">{{item.badge}}</view>
+      <view class="cd-main">
+        <view class="cd-title">{{item.title}}</view>
+        <view class="cd-sub">{{item.dateText}} · {{item.statusText}}{{item.status === 'today' ? '' : item.days + ' 天'}}</view>
+      </view>
+      <view class="cd-del" data-id="{{item.id}}" bindtap="onDelete">删除</view>
+    </view>
+  </view>
+
+  <view class="card empty-card" wx:else>
+    <view class="empty-title">还没有纪念日</view>
+    <view class="section-tip" style="margin: 0; text-align: center;">生日、考试、发工资……先加一条吧</view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

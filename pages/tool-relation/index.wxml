@@ -1,0 +1,48 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" free="{{true}}" />
+
+  <view class="card">
+    <view class="card-title">我是</view>
+    <view class="tag-row">
+      <view class="tag {{gender === 'male' ? 'active' : ''}}" data-g="male" bindtap="onGender">男</view>
+      <view class="tag {{gender === 'female' ? 'active' : ''}}" data-g="female" bindtap="onGender">女</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">关系路径（从「我」出发）</view>
+    <view class="path-box">
+      <text class="path-chip me">我</text>
+      <block wx:for="{{path}}" wx:key="*this">
+        <text class="path-arrow">→</text>
+        <text class="path-chip">{{item}}</text>
+      </block>
+    </view>
+    <view class="section-tip" wx:if="{{!path.length}}">依次点选关系，例如：爸爸 → 的哥哥</view>
+
+    <view class="rel-grid">
+      <view
+        class="rel-btn"
+        wx:for="{{relations}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        data-label="{{item.label}}"
+        bindtap="onPick"
+      >{{item.label}}</view>
+    </view>
+
+    <view class="row-btns">
+      <button class="btn-ghost flex-btn" bindtap="onBack" disabled="{{!path.length}}">回退</button>
+      <button class="btn-ghost flex-btn" bindtap="onReset">清空</button>
+      <button class="btn-primary flex-btn calc" bindtap="onQuery" disabled="{{!path.length}}">查询称呼</button>
+    </view>
+  </view>
+
+  <view class="result-box" wx:if="{{call}}">
+    <view class="result-label">TA 应该叫</view>
+    <view class="result-value">{{call}}</view>
+    <view class="result-sub" wx:if="{{note}}">{{note}}</view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

@@ -1,0 +1,47 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" />
+
+  <view class="card">
+    <view class="card-title">抽取模式</view>
+    <view class="tag-row">
+      <view class="tag {{mode === 'list' ? 'active' : ''}}" data-mode="list" bindtap="onMode">名单抽签</view>
+      <view class="tag {{mode === 'number' ? 'active' : ''}}" data-mode="number" bindtap="onMode">数字范围</view>
+      <view class="tag {{mode === 'dice' ? 'active' : ''}}" data-mode="dice" bindtap="onMode">掷骰子</view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{mode === 'list'}}">
+    <view class="card-title">名单（每行一个）</view>
+    <textarea
+      class="textarea"
+      placeholder="张三&#10;李四&#10;王五"
+      value="{{listText}}"
+      bindinput="onList"
+      maxlength="-1"
+    />
+  </view>
+
+  <view class="card" wx:if="{{mode === 'number'}}">
+    <view class="card-title">范围</view>
+    <view class="row">
+      <input class="input flex-1" type="number" placeholder="最小" value="{{minNum}}" bindinput="onMin" />
+      <text class="sep">~</text>
+      <input class="input flex-1" type="number" placeholder="最大" value="{{maxNum}}" bindinput="onMax" />
+    </view>
+  </view>
+
+  <view class="card dice-card" wx:if="{{mode === 'dice'}}">
+    <view class="dice-face"><tool-icon name="dice" size="{{88}}"></tool-icon></view>
+    <view class="section-tip" style="margin: 0; text-align: center;">模拟标准 6 面骰子</view>
+  </view>
+
+  <button class="btn-primary" bindtap="onDraw">开始抽取</button>
+
+  <view class="result-box" wx:if="{{result !== ''}}">
+    <view class="result-label">抽中了</view>
+    <view class="result-value big">{{result}}</view>
+    <button class="btn-ghost" style="margin-top: 12rpx;" bindtap="onDraw">再抽一次</button>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

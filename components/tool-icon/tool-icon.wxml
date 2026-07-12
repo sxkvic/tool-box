@@ -1,0 +1,129 @@
+<view class="ico {{themeClass}}" style="width: {{sizeRpx}}rpx; height: {{sizeRpx}}rpx;">
+  <block wx:if="{{name === 'unit'}}">
+    <view class="s unit-frame"></view>
+    <view class="f unit-t unit-t1"></view>
+    <view class="f unit-t unit-t2"></view>
+    <view class="f unit-t unit-t3"></view>
+    <view class="f unit-t unit-t4"></view>
+  </block>
+
+  <block wx:elif="{{name === 'bmi'}}">
+    <view class="s act-box"></view>
+    <view class="f act-line"></view>
+    <view class="f act-peak"></view>
+    <view class="f act-dip"></view>
+  </block>
+
+  <block wx:elif="{{name === 'timestamp'}}">
+    <view class="s clock"></view>
+    <view class="f clock-h"></view>
+    <view class="f clock-m"></view>
+    <view class="f clock-c"></view>
+  </block>
+
+  <block wx:elif="{{name === 'text'}}">
+    <view class="s file"></view>
+    <view class="s file-ear"></view>
+    <view class="f file-l file-l1"></view>
+    <view class="f file-l file-l2"></view>
+    <view class="f file-l file-l3"></view>
+  </block>
+
+  <block wx:elif="{{isDice}}">
+    <view class="s dice"></view>
+    <view class="f dd d1"></view>
+    <view class="f dd d2"></view>
+    <view class="f dd d3"></view>
+    <view class="f dd d4"></view>
+    <view class="f dd d5"></view>
+  </block>
+
+  <block wx:elif="{{name === 'relation'}}">
+    <view class="s uh uh1"></view>
+    <view class="s ub ub1"></view>
+    <view class="s uh uh2"></view>
+    <view class="s ub ub2"></view>
+  </block>
+
+  <block wx:elif="{{name === 'radix'}}">
+    <view class="s br br-l"></view>
+    <view class="s br br-r"></view>
+    <view class="f slash"></view>
+  </block>
+
+  <block wx:elif="{{name === 'color'}}">
+    <view class="s drop"></view>
+    <view class="f drop-hi"></view>
+  </block>
+
+  <block wx:elif="{{name === 'search'}}">
+    <view class="s search-c"></view>
+    <view class="f search-l"></view>
+  </block>
+
+  <block wx:elif="{{name === 'food'}}">
+    <view class="s bowl"></view>
+    <view class="f bowl-base"></view>
+    <view class="f steam steam1"></view>
+    <view class="f steam steam2"></view>
+    <view class="f steam steam3"></view>
+  </block>
+
+  <block wx:elif="{{name === 'password'}}">
+    <view class="s lock-body"></view>
+    <view class="s lock-shackle"></view>
+    <view class="f lock-key"></view>
+  </block>
+
+  <block wx:elif="{{name === 'pomodoro'}}">
+    <view class="s tomato"></view>
+    <view class="f tomato-leaf leaf-a"></view>
+    <view class="f tomato-leaf leaf-b"></view>
+    <view class="f tomato-hi"></view>
+  </block>
+
+  <block wx:elif="{{name === 'loan'}}">
+    <view class="s house"></view>
+    <view class="f roof-l"></view>
+    <view class="f roof-r"></view>
+    <view class="f house-door"></view>
+  </block>
+
+  <block wx:elif="{{name === 'discount'}}">
+    <view class="s tag-body"></view>
+    <view class="f tag-hole"></view>
+    <view class="f tag-pct tag-pct1"></view>
+    <view class="f tag-pct tag-pct2"></view>
+    <view class="f tag-slash"></view>
+  </block>
+
+  <block wx:elif="{{name === 'countdown'}}">
+    <view class="s cal-body"></view>
+    <view class="f cal-top"></view>
+    <view class="f cal-ring cal-ring-l"></view>
+    <view class="f cal-ring cal-ring-r"></view>
+    <view class="f cal-dot cal-d1"></view>
+    <view class="f cal-dot cal-d2"></view>
+    <view class="f cal-dot cal-d3"></view>
+  </block>
+
+  <block wx:elif="{{name === 'todo'}}">
+    <view class="s check-box"></view>
+    <view class="f check-tick"></view>
+    <view class="f check-line check-l1"></view>
+    <view class="f check-line check-l2"></view>
+  </block>
+
+  
+    <block wx:elif="{{name === 'weight'}}">
+    <view class="s scale-base"></view>
+    <view class="f scale-dial"></view>
+    <view class="f scale-needle"></view>
+    <view class="f scale-foot scale-foot-l"></view>
+    <view class="f scale-foot scale-foot-r"></view>
+  </block>
+
+  <block wx:else>
+    <view class="s fallback"></view>
+  </block>
+</view>

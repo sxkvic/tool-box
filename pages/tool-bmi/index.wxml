@@ -1,0 +1,34 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" />
+
+  <view class="card">
+    <view class="card-title">身高 (cm)</view>
+    <input class="input" type="digit" placeholder="例如 170" value="{{height}}" bindinput="onHeight" />
+  </view>
+
+  <view class="card">
+    <view class="card-title">体重 (kg)</view>
+    <input class="input" type="digit" placeholder="例如 65" value="{{weight}}" bindinput="onWeight" />
+  </view>
+
+  <button class="btn-primary" bindtap="onCalc">计算 BMI</button>
+
+  <view class="result-box" wx:if="{{bmi}}">
+    <view class="result-label">BMI 结果</view>
+    <view class="bmi-main">
+      <view class="result-value">{{bmi}}</view>
+      <view class="level-pill" style="color: {{levelColor}}; border-color: {{levelColor}};">
+        {{levelText}}
+      </view>
+    </view>
+    <view class="hint">{{hint}}</view>
+    <view class="range-list">
+      <view class="range-item" wx:for="{{ranges}}" wx:key="text">
+        <text class="dot" style="background: {{item.color}}"></text>
+        <text>{{item.text}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

@@ -1,0 +1,48 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" free="{{true}}" bind:rewarded="onQuotaChange" />
+
+  <view class="card">
+    <view class="card-title">换算类型</view>
+    <view class="tag-row">
+      <view
+        class="tag {{category === item.key ? 'active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onCategory"
+      >{{item.name}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">输入数值</view>
+    <view class="row">
+      <input class="input flex-1" type="digit" placeholder="输入数值" value="{{inputValue}}" bindinput="onInput" />
+      <picker mode="selector" range="{{fromUnits}}" range-key="label" value="{{fromIndex}}" bindchange="onFromChange">
+        <view class="picker-value unit-pick">{{fromUnits[fromIndex].label}} ▾</view>
+      </picker>
+    </view>
+
+    <view class="swap-row">
+      <view class="swap-line"></view>
+      <view class="swap-badge">换算为</view>
+      <view class="swap-line"></view>
+    </view>
+
+    <picker mode="selector" range="{{toUnits}}" range-key="label" value="{{toIndex}}" bindchange="onToChange">
+      <view class="picker-value">{{toUnits[toIndex].label}} ▾</view>
+    </picker>
+    <button class="btn-primary" bindtap="onConvert">开始换算</button>
+  </view>
+
+  <view class="result-box" wx:if="{{result !== ''}}">
+    <view class="result-label">换算结果</view>
+    <view class="result-value">{{result}}</view>
+    <view class="result-sub">{{inputValue}} {{fromUnits[fromIndex].label}} = {{result}} {{toUnits[toIndex].label}}</view>
+    <button class="btn-ghost" style="margin-top: 20rpx;" bindtap="onCopy">复制结果</button>
+  </view>
+
+  <view class="ad-slot">
+    <ad-banner />
+  </view>
+</view>

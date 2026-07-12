@@ -1,0 +1,98 @@
+<view class="container theme-{{theme}} diet-page">
+  <view class="card day-bar">
+    <view class="day-nav">
+      <view class="day-btn" bindtap="onPrevDay">‹</view>
+      <picker mode="date" value="{{date}}" bindchange="onPickDate">
+        <view class="day-center">
+          <text class="day-label">{{dateLabel}}</text>
+          <text class="day-date">{{date}}</text>
+        </view>
+      </picker>
+      <view class="day-btn" bindtap="onNextDay">›</view>
+    </view>
+  </view>
+
+  <view class="card kcal-card">
+    <view class="kcal-top">
+      <view>
+        <view class="kcal-title">今日热量</view>
+        <view class="kcal-sub">{{tip}}</view>
+      </view>
+      <view class="link-btn" bindtap="goSettings">目标设置</view>
+    </view>
+    <view class="kcal-nums">
+      <view class="kcal-big">
+        <text class="kcal-n">{{intakeKcal}}</text>
+        <text class="kcal-u">/ {{targetKcal}} kcal</text>
+      </view>
+      <view class="remain tone-{{remainTone}}">{{remainText}} kcal</view>
+    </view>
+    <view class="prog-track">
+      <view class="prog-fill" style="width: {{pctKcal}}%;"></view>
+    </view>
+    <view class="meta-row">
+      <text>BMR {{bmrText}}</text>
+      <text>TDEE {{tdeeText}}</text>
+      <text>{{modeName}}</text>
+    </view>
+  </view>
+
+  <view class="card macro-card">
+    <view class="card-title">三大营养素</view>
+    <view class="macro-row">
+      <view class="macro-item">
+        <view class="macro-head">
+          <text class="macro-name">蛋白质</text>
+          <text class="macro-val">{{protein}}/{{proteinT}}g</text>
+        </view>
+        <view class="prog-track thin"><view class="prog-fill p" style="width: {{pctP}}%;"></view></view>
+      </view>
+      <view class="macro-item">
+        <view class="macro-head">
+          <text class="macro-name">脂肪</text>
+          <text class="macro-val">{{fat}}/{{fatT}}g</text>
+        </view>
+        <view class="prog-track thin"><view class="prog-fill f" style="width: {{pctF}}%;"></view></view>
+      </view>
+      <view class="macro-item">
+        <view class="macro-head">
+          <text class="macro-name">碳水</text>
+          <text class="macro-val">{{carb}}/{{carbT}}g</text>
+        </view>
+        <view class="prog-track thin"><view class="prog-fill c" style="width: {{pctC}}%;"></view></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card meal-card" wx:for="{{meals}}" wx:key="id">
+    <view class="meal-head">
+      <view class="meal-left">
+        <view class="meal-badge">{{item.icon}}</view>
+        <view>
+          <view class="meal-name">{{item.name}}</view>
+          <view class="meal-kcal">{{item.sumKcal}} kcal</view>
+        </view>
+      </view>
+      <view class="add-pill" data-meal="{{item.id}}" bindtap="goAdd">+ 添加</view>
+    </view>
+    <view wx:if="{{item.empty}}" class="meal-empty">还没记，点添加选食物</view>
+    <view wx:else class="food-list">
+      <view class="food-row" wx:for="{{item.items}}" wx:for-item="food" wx:key="id">
+        <view class="food-thumb" style="background: {{food.bg}};">
+          <text class="food-emoji">{{food.emoji}}</text>
+        </view>
+        <view class="food-main">
+          <text class="food-name">{{food.name}}</text>
+          <text class="food-sub">{{food.line}}</text>
+        </view>
+        <view class="food-right">
+          <text class="food-kcal">{{food.kcal}}</text>
+          <text class="food-del" data-id="{{food.id}}" catchtap="onDelete">删</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="disclaimer">营养数据为本地估算，来源公开食物成分参考，不构成医疗或营养处方。</view>
+  <view class="ad-slot"><ad-banner /></view>
+</view>

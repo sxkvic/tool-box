@@ -1,0 +1,38 @@
+.line {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 18rpx 0;
+  margin-bottom: 0;
+  gap: 20rpx;
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.06);
+}
+
+.line:last-of-type {
+  border-bottom: none;
+  margin-bottom: 8rpx;
+}
+
+.k {
+  font-size: 22rpx;
+  color: #5ce1ff;
+  flex-shrink: 0;
+  padding-top: 2rpx;
+  letter-spacing: 1rpx;
+}
+
+.v {
+  font-size: 28rpx;
+  color: #f4f7ff;
+  font-weight: 600;
+  word-break: break-all;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Clean Lab */
+.theme-light .line {
+  border-bottom-color: #eef2f7;
+}
+.theme-light .k { color: #2563eb; }
+.theme-light .v { color: #0f172a; }

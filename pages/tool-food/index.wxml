@@ -1,0 +1,54 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" />
+
+  <view class="card">
+    <view class="card-title">菜单模式</view>
+    <view class="tag-row">
+      <view
+        class="tag {{mode === item.key ? 'active' : ''}}"
+        wx:for="{{modes}}"
+        wx:key="key"
+        data-mode="{{item.key}}"
+        bindtap="onMode"
+      >{{item.name}}</view>
+    </view>
+    <view class="section-tip" style="margin-top: 16rpx;">当前候选 {{poolHint}} 道 · 纯本地随机</view>
+  </view>
+
+  <view class="card" wx:if="{{mode === 'custom'}}">
+    <view class="card-title">自定义菜单</view>
+    <textarea
+      class="textarea"
+      placeholder="每行一个，或用逗号 / 顿号分隔&#10;例如：麻辣烫、寿司、轻食"
+      maxlength="-1"
+      value="{{customText}}"
+      bindinput="onCustom"
+      show-confirm-bar="{{false}}"
+    />
+  </view>
+
+  <view class="card stage-card">
+    <view class="stage-label">{{spinning ? 'SCANNING…' : (result ? 'TODAY' : 'READY')}}</view>
+    <view class="stage-icon {{spinning ? 'spin' : ''}}">
+      <tool-icon name="food" size="{{72}}"></tool-icon>
+    </view>
+    <view class="stage-result {{spinning ? 'blur' : ''}}">{{result || '点下方决定命运'}}</view>
+    <view class="section-tip" style="margin: 8rpx 0 0; text-align: center;">纠结星人专属模块</view>
+  </view>
+
+  <button class="btn-primary" bindtap="onDraw" disabled="{{spinning}}">
+    {{spinning ? '抽取中…' : (result ? '再抽一次' : '今天吃什么')}}
+  </button>
+
+  <view class="card" wx:if="{{history.length}}">
+    <view class="card-title">最近结果</view>
+    <view class="hist-list">
+      <view class="hist-item" wx:for="{{history}}" wx:key="*this">
+        <text class="hist-idx">#{{index + 1}}</text>
+        <text class="hist-name">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

@@ -1,0 +1,15 @@
+<view class="quota {{themeClass}} {{free ? 'quota-free' : ''}}">
+  <view class="quota-left">
+    <view class="quota-badge">
+      <view class="quota-dot"></view>
+      <text>{{free ? 'FREE' : 'QUOTA'}}</text>
+    </view>
+    <view class="quota-texts">
+      <view class="quota-title" wx:if="{{free}}">本工具不限次数</view>
+      <view class="quota-title" wx:else>今日剩余 <text class="quota-num">{{remain}}</text> 次</view>
+      <view class="quota-sub">{{free ? '常用轻量工具长期免费' : '每日 0 点重置 · 本地计数'}}</view>
+    </view>
+  </view>
+  <button class="quota-btn" bindtap="onReward" wx:if="{{!free}}">看视频 +{{rewardExtra}}</button>
+  <view class="quota-free-tag" wx:else>∞</view>
+</view>

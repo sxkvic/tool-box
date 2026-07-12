@@ -1,0 +1,32 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" free="{{true}}" />
+
+  <view class="card">
+    <view class="card-title">输入数值</view>
+    <input class="input" placeholder="如 255 或 FF" value="{{value}}" bindinput="onValue" />
+    <view class="section-tip" style="margin-top: 20rpx; margin-bottom: 12rpx;">原进制</view>
+    <view class="tag-row">
+      <view
+        class="tag {{fromRadix === item ? 'active' : ''}}"
+        wx:for="{{radixList}}"
+        wx:key="*this"
+        data-v="{{item}}"
+        data-type="from"
+        bindtap="onRadix"
+      >{{item}} 进制</view>
+    </view>
+  </view>
+
+  <button class="btn-primary" bindtap="onConvert">转换</button>
+
+  <view class="card" wx:if="{{show}}">
+    <view class="card-title">转换结果</view>
+    <view class="line" wx:for="{{results}}" wx:key="label">
+      <text class="k">{{item.label}}</text>
+      <text class="v" data-v="{{item.value}}" bindtap="onCopy">{{item.value}}</text>
+    </view>
+    <view class="section-tip" style="margin-top: 12rpx; margin-bottom: 0;">点击结果可复制</view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "饮食日记",
+  "navigationBarBackgroundColor": "#05070c",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#05070c",
+  "usingComponents": {
+    "ad-banner": "/components/ad-banner/ad-banner"
+  }
+}

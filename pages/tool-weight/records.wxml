@@ -1,0 +1,51 @@
+<view class="container theme-{{theme}} weight-records">
+  <view class="card head-card">
+    <view class="head-title">全部记录</view>
+    <view class="head-sub">共 {{count}} 条 · 仅存本机</view>
+  </view>
+
+  <view class="card" wx:if="{{!count}}">
+    <view class="empty-title">暂无记录</view>
+    <view class="empty-desc">回到体重管理首页，点「记录体重」开始</view>
+  </view>
+
+  <view class="card rec-card" wx:for="{{list}}" wx:key="id">
+    <view class="rec-main">
+      <view class="rec-left">
+        <text class="rec-date">{{item.date}} {{item.time}}</text>
+        <text class="rec-note" wx:if="{{item.note}}">{{item.note}}</text>
+        <text class="rec-note muted" wx:else>无备注</text>
+      </view>
+      <view class="rec-right">
+        <text class="rec-w">{{item.weight}}</text>
+        <text class="rec-u">kg</text>
+        <text class="rec-bf" wx:if="{{item.bfText}}">{{item.bfText}}</text>
+      </view>
+    </view>
+    <view class="rec-actions">
+      <view class="act" data-id="{{item.id}}" bindtap="onEdit">编辑</view>
+      <view class="act danger" data-id="{{item.id}}" bindtap="onDelete">删除</view>
+    </view>
+  </view>
+
+  <!-- edit sheet -->
+  <view class="sheet-mask {{editOn ? 'on' : ''}}" bindtap="closeEdit" wx:if="{{editOn}}"></view>
+  <view class="sheet {{editOn ? 'on' : ''}}" wx:if="{{editOn}}">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title">编辑记录</view>
+    <view class="sheet-field">
+      <text class="sheet-label">体重 (kg)</text>
+      <input class="input" type="digit" value="{{formWeight}}" bindinput="onFormWeight" />
+    </view>
+    <view class="sheet-field">
+      <text class="sheet-label">体脂 %（可选）</text>
+      <input class="input" type="digit" value="{{formBodyFat}}" bindinput="onFormFat" />
+    </view>
+    <view class="sheet-field">
+      <text class="sheet-label">备注</text>
+      <input class="input" value="{{formNote}}" bindinput="onFormNote" maxlength="40" />
+    </view>
+    <button class="btn-primary" type="default" bindtap="onSaveEdit">保存</button>
+    <button class="btn-ghost" type="default" style="margin-top: 16rpx;" bindtap="closeEdit">取消</button>
+  </view>
+</view>

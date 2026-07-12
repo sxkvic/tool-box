@@ -1,0 +1,153 @@
+<view class="container theme-{{theme}} food-add-page">
+  <view class="card head-card">
+    <view class="head-row">
+      <view>
+        <view class="head-title">添加饮食</view>
+        <view class="head-sub">{{date}} · {{mealName}}</view>
+      </view>
+    </view>
+    <view class="meal-tabs">
+      <view
+        class="meal-tab {{meal === item.id ? 'on' : ''}}"
+        wx:for="{{meals}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onMeal"
+      >{{item.name}}</view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{!selected}}">
+    <view class="search-box">
+      <input
+        class="input search-input"
+        placeholder="搜索食物，如 鸡胸肉 / 米饭"
+        value="{{keyword}}"
+        bindinput="onKeyword"
+        confirm-type="search"
+      />
+      <view class="search-clear" wx:if="{{keyword}}" bindtap="onClearKeyword">清空</view>
+    </view>
+
+    <scroll-view scroll-x class="cat-scroll" enable-flex="{{true}}">
+      <view
+        class="cat-chip {{cat === item.id ? 'on' : ''}}"
+        wx:for="{{cats}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onCat"
+      >{{item.emoji}} {{item.name}}</view>
+    </scroll-view>
+
+    <block wx:if="{{!keyword && recent.length}}">
+      <view class="section-label">最近添加</view>
+      <view class="food-list">
+        <view
+          class="food-item"
+          wx:for="{{recent}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="pickFood"
+        >
+          <view class="food-thumb" style="background: {{item.bg}};">
+            <text class="food-emoji">{{item.emoji}}</text>
+          </view>
+          <view class="food-main">
+            <text class="food-name">{{item.name}}</text>
+            <text class="food-sub">{{item.line}}</text>
+          </view>
+          <text class="food-go">›</text>
+        </view>
+      </view>
+    </block>
+
+    <view class="section-label">{{keyword ? '搜索结果' : '食物库'}} · {{list.length}}</view>
+    <view class="food-list" wx:if="{{list.length}}">
+      <view
+        class="food-item"
+        wx:for="{{list}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="pickFood"
+      >
+        <view class="food-thumb" style="background: {{item.bg}};">
+          <text class="food-emoji">{{item.emoji}}</text>
+        </view>
+        <view class="food-main">
+          <text class="food-name">{{item.name}}</text>
+          <text class="food-sub">{{item.line}}</text>
+        </view>
+        <text class="food-go">›</text>
+      </view>
+    </view>
+    <view class="empty" wx:else>没有找到相关食物</view>
+  </view>
+
+  <block wx:else>
+    <view class="card">
+      <view class="sel-top">
+        <view class="sel-left">
+          <view class="sel-thumb" style="background: {{selected.bg}};">
+            <text class="sel-emoji">{{selected.emoji}}</text>
+          </view>
+          <view>
+            <view class="sel-name">{{selected.name}}</view>
+            <view class="sel-sub">{{selected.per100}}</view>
+          </view>
+        </view>
+        <view class="link-btn" bindtap="clearSelected">重选</view>
+      </view>
+
+      <view class="field-label">重量 (g)</view>
+      <input
+        class="input"
+        type="digit"
+        placeholder="例如 150"
+        value="{{grams}}"
+        bindinput="onGrams"
+        focus="{{true}}"
+      />
+      <view class="quick-row">
+        <view
+          class="quick-chip {{grams == item ? 'on' : ''}}"
+          wx:for="{{quickGrams}}"
+          wx:key="*this"
+          data-g="{{item}}"
+          bindtap="onQuickGram"
+        >{{item}}g</view>
+      </view>
+
+      <view class="preview" wx:if="{{preview}}">
+        <view class="preview-title">本次摄入估算</view>
+        <view class="preview-kcal">
+          <text class="pk-n">{{preview.kcal}}</text>
+          <text class="pk-u">kcal</text>
+        </view>
+        <view class="preview-macros">
+          <view class="pm">
+            <text class="pm-k">蛋白</text>
+            <text class="pm-v">{{preview.protein}}g</text>
+          </view>
+          <view class="pm">
+            <text class="pm-k">脂肪</text>
+            <text class="pm-v">{{preview.fat}}g</text>
+          </view>
+          <view class="pm">
+            <text class="pm-k">碳水</text>
+            <text class="pm-v">{{preview.carb}}g</text>
+          </view>
+          <view class="pm">
+            <text class="pm-k">重量</text>
+            <text class="pm-v">{{preview.grams}}g</text>
+          </view>
+        </view>
+      </view>
+
+      <button class="btn-primary" type="default" bindtap="onSave" disabled="{{saving}}">
+        {{saveLabel}}
+      </button>
+    </view>
+  </block>
+
+  <view class="disclaimer">营养数据为本地估算，按每100g比例换算，仅供参考。</view>
+</view>

@@ -1,0 +1,45 @@
+.result-value.summary {
+  font-size: 34rpx;
+  margin-bottom: 8rpx;
+}
+
+.loan-lines {
+  margin-top: 18rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.08);
+  padding-top: 8rpx;
+}
+
+.loan-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.05);
+}
+
+.loan-line:last-child {
+  border-bottom: none;
+}
+
+.loan-k {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.loan-v {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.theme-light .loan-lines {
+  border-top-color: #eef2f7;
+}
+.theme-light .loan-line {
+  border-bottom-color: #f1f5f9;
+}
+.theme-light .loan-v {
+  color: #0f172a;
+}

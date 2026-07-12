@@ -1,0 +1,159 @@
+.weight-records .head-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.head-title {
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.head-sub {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+}
+
+.empty-title {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.empty-desc {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.rec-card {
+  padding-bottom: 18rpx;
+}
+
+.rec-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 16rpx;
+  align-items: flex-start;
+}
+
+.rec-left {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.rec-date {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.rec-note {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+}
+
+.rec-note.muted {
+  color: var(--text-muted);
+}
+
+.rec-right {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+  flex-shrink: 0;
+}
+
+.rec-w {
+  font-size: 40rpx;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rec-u {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+}
+
+.rec-bf {
+  margin-left: 10rpx;
+  font-size: 22rpx;
+  color: var(--accent);
+}
+
+.rec-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 24rpx;
+  margin-top: 16rpx;
+  padding-top: 14rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.06);
+}
+
+.act {
+  font-size: 24rpx;
+  color: var(--accent);
+  font-weight: 600;
+  padding: 6rpx 4rpx;
+}
+
+.act.danger {
+  color: #f87171;
+}
+
+.sheet-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 40;
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  background: linear-gradient(180deg, #121a2c, #0a101c);
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 16rpx 28rpx calc(28rpx + env(safe-area-inset-bottom));
+  transform: translateY(110%);
+  transition: transform 0.28s ease;
+}
+
+.sheet.on { transform: translateY(0); }
+
+.sheet-handle {
+  width: 72rpx;
+  height: 8rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.18);
+  margin: 4rpx auto 18rpx;
+}
+
+.sheet-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+}
+
+.sheet-field { margin-bottom: 18rpx; }
+.sheet-label {
+  display: block;
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  margin-bottom: 10rpx;
+}
+
+.theme-light .rec-actions {
+  border-top-color: #eef2f7;
+}
+
+.theme-light .act.danger { color: #e11d48; }
+
+.theme-light .sheet {
+  background: #ffffff;
+  box-shadow: 0 -12rpx 40rpx rgba(15, 23, 42, 0.08);
+}
+
+.theme-light .sheet-handle { background: #e2e8f0; }

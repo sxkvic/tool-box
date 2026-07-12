@@ -1,0 +1,178 @@
+<view class="page theme-{{theme}} {{pageAnimClass}}">
+  <view class="bg-layer" aria-hidden="true">
+    <view class="orb orb-a"></view>
+    <view class="orb orb-b"></view>
+    <view class="grid-mask"></view>
+    <view class="scanline"></view>
+  </view>
+
+  <view class="theme-veil {{veilClass}} {{themeVeilTone}}" aria-hidden="true"></view>
+
+  <view class="hero anim-fade-up">
+    <view class="hero-top">
+      <view class="status-chip">
+        <view class="status-dot"></view>
+        <text>{{statusText}}</text>
+      </view>
+      <view
+        class="theme-switch theme-switch-{{theme}} {{switchClass}}"
+        bindtap="onToggleTheme"
+        hover-class="theme-switch-hover"
+        hover-stay-time="80"
+      >
+        <view class="theme-switch-track">
+          <view class="theme-switch-thumb">
+            <text class="theme-switch-ico">{{themeIco}}</text>
+          </view>
+          <text class="theme-switch-label">{{themeLabel}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="hero-title">随身工具箱</view>
+    <view class="hero-sub">{{heroSub}}</view>
+    <view class="hero-meta">
+      <view class="meta-item">
+        <text class="meta-num">{{toolCount}}</text>
+        <text class="meta-label">MODULES</text>
+      </view>
+      <view class="meta-divider"></view>
+      <view class="meta-item">
+        <text class="meta-num">3</text>
+        <text class="meta-label">GROUPS</text>
+      </view>
+      <view class="meta-divider"></view>
+      <view class="meta-item">
+        <text class="meta-num">LOCAL</text>
+        <text class="meta-label">DATA</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="search-wrap anim-fade-up anim-delay-1">
+    <view class="search-box">
+      <tool-icon name="search" size="{{32}}"></tool-icon>
+      <input
+        class="search-input"
+        placeholder="搜索模块 / 关键词"
+        placeholder-class="search-ph"
+        value="{{keyword}}"
+        bindinput="onSearch"
+        confirm-type="search"
+      />
+      <view class="search-clear" wx:if="{{keyword}}" bindtap="onClearSearch">清除</view>
+    </view>
+  </view>
+
+  <!-- 收藏 -->
+  <block wx:if="{{!isSearch && favTools.length}}">
+    <view class="section-head anim-fade-up">
+      <view class="section-title">
+        <text class="section-mark">//</text>
+        <text>我的收藏</text>
+        <text class="section-en">FAVORITES</text>
+      </view>
+      <view class="section-count">{{favTools.length}}</view>
+    </view>
+    <view class="quick-row">
+      <view
+        class="quick-chip"
+        wx:for="{{favTools}}"
+        wx:key="id"
+        data-path="{{item.path}}"
+        data-id="{{item.id}}"
+        bindtap="goTool"
+        hover-class="quick-chip-hover"
+        hover-stay-time="80"
+      >
+        <tool-icon name="{{item.icon}}" size="{{28}}"></tool-icon>
+        <text class="quick-name">{{item.name}}</text>
+        <view class="fav-btn on" data-id="{{item.id}}" catchtap="onToggleFav">★</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 最近 -->
+  <block wx:if="{{!isSearch && recentTools.length}}">
+    <view class="section-head anim-fade-up">
+      <view class="section-title">
+        <text class="section-mark">//</text>
+        <text>最近使用</text>
+        <text class="section-en">RECENT</text>
+      </view>
+      <view class="section-count">{{recentTools.length}}</view>
+    </view>
+    <view class="quick-row">
+      <view
+        class="quick-chip"
+        wx:for="{{recentTools}}"
+        wx:key="id"
+        data-path="{{item.path}}"
+        data-id="{{item.id}}"
+        bindtap="goTool"
+        hover-class="quick-chip-hover"
+        hover-stay-time="80"
+      >
+        <tool-icon name="{{item.icon}}" size="{{28}}"></tool-icon>
+        <text class="quick-name">{{item.name}}</text>
+      </view>
+    </view>
+  </block>
+
+  <block wx:if="{{sections.length}}">
+    <block wx:for="{{sections}}" wx:key="id" wx:for-item="sec">
+      <view class="section-head anim-fade-up">
+        <view class="section-title">
+          <text class="section-mark">//</text>
+          <text>{{sec.title}}</text>
+          <text class="section-en">{{sec.en}}</text>
+        </view>
+        <view class="section-count">{{sec.count}}</view>
+      </view>
+      <view class="section-desc">{{sec.desc}}</view>
+
+      <view class="tool-grid">
+        <view
+          class="tool-card anim-fade-up"
+          style="animation-delay: {{item.delay}};"
+          wx:for="{{sec.items}}"
+          wx:key="id"
+          data-path="{{item.path}}"
+          data-id="{{item.id}}"
+          bindtap="goTool"
+          hover-class="tool-card-hover"
+          hover-stay-time="80"
+        >
+          <view class="tool-card-glow"></view>
+          <view class="tool-card-corner"></view>
+          <view class="fav-mark {{item.fav ? 'on' : ''}}" data-id="{{item.id}}" catchtap="onToggleFav">{{item.fav ? '★' : '☆'}}</view>
+          <view class="tool-card-top">
+            <view class="tool-icon-wrap">
+              <tool-icon name="{{item.icon}}" size="{{40}}"></tool-icon>
+            </view>
+            <text class="tool-id">{{item.code}}</text>
+          </view>
+          <view class="tool-name">{{item.name}}</view>
+          <view class="tool-desc">{{item.desc}}</view>
+          <view class="tool-foot">
+            <text class="tool-action">LAUNCH</text>
+            <text class="tool-arrow">›</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <view class="empty anim-fade-up" wx:else>
+    <view class="empty-title">NO MATCH</view>
+    <view class="empty-desc">没有匹配的模块，换个关键词试试</view>
+  </view>
+
+  <view class="ad-slot" wx:if="{{sections.length}}">
+    <ad-banner />
+  </view>
+
+  <view class="footer">
+    <view class="footer-line"></view>
+    <text class="footer-tip">DATA STAYS ON DEVICE · 数据仅保存在本机</text>
+  </view>
+</view>

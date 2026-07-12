@@ -1,0 +1,186 @@
+<view class="container theme-{{theme}} weight-page">
+  <!-- Hero -->
+  <view class="hero-card card">
+    <view class="hero-top">
+      <view class="hero-label">当前体重</view>
+      <view class="hero-actions">
+        <view class="link-btn" bindtap="goSettings">档案 · 目标</view>
+      </view>
+    </view>
+    <view class="hero-main">
+      <view class="hero-weight">
+        <text class="hero-num">{{currentWeight}}</text>
+        <text class="hero-unit">kg</text>
+      </view>
+      <view class="hero-side">
+        <view class="delta-pill tone-{{deltaPrev.tone}}">较上次 {{deltaPrev.text}}</view>
+        <view class="bmi-pill" style="color: {{levelColor}}; border-color: {{levelColor}};">
+          BMI {{bmi}} · {{levelText}}
+        </view>
+      </view>
+    </view>
+    <view class="hero-tip" wx:if="{{readyTip}}">{{readyTip}}</view>
+    <button class="btn-primary hero-btn" type="default" bindtap="openSheet">记录体重</button>
+  </view>
+
+  <!-- Goal -->
+  <view class="card goal-card" bindtap="goSettings">
+    <view class="card-title">目标进度</view>
+    <block wx:if="{{goalOn}}">
+      <view class="goal-row">
+        <view class="goal-kv">
+          <text class="goal-k">目标</text>
+          <text class="goal-v">{{goalTarget}} kg</text>
+        </view>
+        <view class="goal-kv right">
+          <text class="goal-k">进度</text>
+          <text class="goal-v">{{goalPercent}}%</text>
+        </view>
+      </view>
+      <view class="prog-track">
+        <view class="prog-fill" style="width: {{goalPercent}}%;"></view>
+      </view>
+      <view class="goal-sub">{{goalRemain}}</view>
+      <view class="goal-sub muted" wx:if="{{goalWeekly}}">{{goalWeekly}}</view>
+      <view class="goal-done" wx:if="{{goalDone}}">目标已达成，保持住！</view>
+    </block>
+    <view class="empty-inline" wx:else>
+      <text>还没有目标，点此设置目标体重</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+
+  <!-- Diet -->
+  <view class="card diet-card" bindtap="goDiet">
+    <view class="card-title-row">
+      <view class="card-title" style="margin-bottom:0;">今日饮食</view>
+      <view class="link-btn" catchtap="goFoodAdd">记一笔</view>
+    </view>
+    <view class="diet-nums">
+      <view class="diet-big">
+        <text class="diet-n">{{dietIntake}}</text>
+        <text class="diet-u">/ {{dietTarget}} kcal</text>
+      </view>
+      <view class="diet-remain tone-{{dietRemainTone}}">{{dietRemainText}}</view>
+    </view>
+    <view class="prog-track">
+      <view class="prog-fill" style="width: {{dietPct}}%;"></view>
+    </view>
+    <view class="diet-foot">
+      <text class="diet-macro">{{dietMacroLine}}</text>
+      <text class="diet-count">{{dietCount}} 条记录 ›</text>
+    </view>
+  </view>
+
+  <!-- Chart -->
+  <view class="card chart-card">
+    <view class="card-title-row">
+      <view class="card-title" style="margin-bottom:0;">体重趋势</view>
+      <view class="range-tabs">
+        <view
+          class="range-tab {{chartRange === item.id ? 'on' : ''}}"
+          wx:for="{{ranges}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onRange"
+        >{{item.label}}</view>
+      </view>
+    </view>
+    <canvas canvas-id="weightChart" class="chart-canvas" style="width: {{chartW}}px; height: {{chartH}}px;"></canvas>
+    <view class="stat-grid">
+      <view class="stat-item">
+        <text class="stat-k">近7日</text>
+        <text class="stat-v tone-{{delta7.tone}}">{{delta7.text}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-k">近30日</text>
+        <text class="stat-v tone-{{delta30.tone}}">{{delta30.text}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-k">区间最高</text>
+        <text class="stat-v">{{highText}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-k">区间最低</text>
+        <text class="stat-v">{{lowText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Health -->
+  <view class="card">
+    <view class="card-title">健康评估</view>
+    <view class="health-row">
+      <view class="health-box">
+        <text class="health-k">BMI</text>
+        <text class="health-v" style="color: {{levelColor}};">{{bmi}}</text>
+        <text class="health-s">{{levelText}}</text>
+      </view>
+      <view class="health-box">
+        <text class="health-k">理想体重</text>
+        <text class="health-v sm">{{idealText}}</text>
+        <text class="health-s">BMI 18.5–24</text>
+      </view>
+      <view class="health-box">
+        <text class="health-k">体脂</text>
+        <text class="health-v sm">{{bodyFatText}}</text>
+        <text class="health-s">{{bodyFatTag || '可手填'}}</text>
+      </view>
+    </view>
+    <view class="level-hint">{{levelHint}}</view>
+    <view class="disclaimer">评估仅供参考，不构成医疗建议。数据仅保存在本机。</view>
+  </view>
+
+  <!-- Recent -->
+  <view class="card">
+    <view class="card-title-row">
+      <view class="card-title" style="margin-bottom:0;">最近记录</view>
+      <view class="link-btn" bindtap="goRecords">全部 {{count}} ›</view>
+    </view>
+    <view wx:if="{{!hasRecords}}" class="empty-block">
+      <text class="empty-title">还没有记录</text>
+      <text class="empty-desc">每天花 5 秒记一下，趋势才会说话</text>
+      <button class="btn-ghost" type="default" bindtap="openSheet">记下今天</button>
+    </view>
+    <view wx:else class="rec-list">
+      <view class="rec-item" wx:for="{{recentList}}" wx:key="id">
+        <view class="rec-left">
+          <text class="rec-date">{{item.date}}</text>
+          <text class="rec-time">{{item.time}} {{item.note}}</text>
+        </view>
+        <view class="rec-right">
+          <text class="rec-w">{{item.weight}}</text>
+          <text class="rec-u">kg</text>
+          <text class="rec-bf" wx:if="{{item.bf}}">{{item.bf}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+
+  <!-- Sheet -->
+  <view class="sheet-mask {{sheetOn ? 'on' : ''}}" bindtap="closeSheet" wx:if="{{sheetOn}}"></view>
+  <view class="sheet {{sheetOn ? 'on' : ''}}">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title">记录体重</view>
+    <view class="sheet-field">
+      <text class="sheet-label">体重 (kg)</text>
+      <input class="input" type="digit" focus="{{sheetOn}}" placeholder="例如 65.5" value="{{formWeight}}" bindinput="onFormWeight" />
+    </view>
+    <view class="sheet-field">
+      <text class="sheet-label">体脂 %（可选）</text>
+      <input class="input" type="digit" placeholder="有体脂秤再填" value="{{formBodyFat}}" bindinput="onFormFat" />
+    </view>
+    <view class="sheet-field">
+      <text class="sheet-label">备注</text>
+      <input class="input" placeholder="可选" value="{{formNote}}" bindinput="onFormNote" maxlength="40" />
+      <view class="chips">
+        <view class="chip {{formNote === item ? 'on' : ''}}" wx:for="{{noteChips}}" wx:key="*this" data-v="{{item}}" bindtap="onChip">{{item}}</view>
+      </view>
+    </view>
+    <button class="btn-primary" type="default" bindtap="onSaveRecord">保存</button>
+    <button class="btn-ghost" type="default" style="margin-top: 16rpx;" bindtap="closeSheet">取消</button>
+  </view>
+</view>

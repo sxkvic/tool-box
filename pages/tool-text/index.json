@@ -1,0 +1,10 @@
+{
+    "navigationBarTitleText":  "文本统计",
+    "usingComponents":  {
+                            "ad-banner":  "/components/ad-banner/ad-banner",
+                            "quota-bar":  "/components/quota-bar/quota-bar"
+                        },
+    "navigationBarBackgroundColor":  "#05070c",
+    "navigationBarTextStyle":  "white",
+    "backgroundColor":  "#05070c"
+}

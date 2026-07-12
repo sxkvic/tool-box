@@ -1,0 +1,35 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/tool-weight/index",
+    "pages/tool-weight/records",
+    "pages/tool-weight/settings",
+    "pages/tool-weight/food-add",
+    "pages/tool-weight/diet",
+    "pages/tool-food/index",
+    "pages/tool-random/index",
+    "pages/tool-relation/index",
+    "pages/tool-password/index",
+    "pages/tool-pomodoro/index",
+    "pages/tool-text/index",
+    "pages/tool-timestamp/index",
+    "pages/tool-countdown/index",
+    "pages/tool-todo/index",
+    "pages/tool-loan/index",
+    "pages/tool-unit/index",
+    "pages/tool-bmi/index",
+    "pages/tool-radix/index",
+    "pages/tool-color/index",
+    "pages/tool-discount/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#05070c",
+    "navigationBarTitleText": "随身工具箱",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#05070c",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,545 @@
+/* 正式线框图标组件 · 统一青色 #5CE1FF */
+.ico {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+}
+
+.s,
+.f {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.s {
+  border: 2.4rpx solid #5ce1ff;
+}
+
+.f {
+  background: #5ce1ff;
+}
+
+/* unit */
+.unit-frame {
+  left: 10%;
+  right: 10%;
+  top: 30%;
+  bottom: 30%;
+  border-radius: 4rpx;
+}
+.unit-t {
+  top: 30%;
+  width: 2.4rpx;
+  border-radius: 2rpx;
+}
+.unit-t1 { left: 30%; height: 20%; }
+.unit-t2 { left: 48%; height: 38%; }
+.unit-t3 { left: 66%; height: 20%; }
+.unit-t4 { left: 82%; height: 12%; }
+
+/* bmi activity */
+.act-box {
+  inset: 14%;
+  border-radius: 8rpx;
+}
+.act-line {
+  left: 24%;
+  right: 24%;
+  top: 50%;
+  height: 2.4rpx;
+  margin-top: -1.2rpx;
+  border-radius: 2rpx;
+}
+.act-peak {
+  left: 42%;
+  top: 28%;
+  width: 2.4rpx;
+  height: 44%;
+  border-radius: 2rpx;
+  transform: skewX(-28deg);
+}
+.act-dip {
+  left: 56%;
+  top: 42%;
+  width: 2.4rpx;
+  height: 30%;
+  border-radius: 2rpx;
+  transform: skewX(28deg);
+}
+
+/* clock */
+.clock {
+  inset: 12%;
+  border-radius: 50%;
+}
+.clock-h {
+  left: 50%;
+  top: 28%;
+  width: 2.4rpx;
+  height: 22%;
+  margin-left: -1.2rpx;
+  border-radius: 2rpx;
+}
+.clock-m {
+  left: 50%;
+  top: 36%;
+  width: 2.4rpx;
+  height: 26%;
+  margin-left: -1.2rpx;
+  border-radius: 2rpx;
+  transform: rotate(105deg);
+  transform-origin: 50% 100%;
+}
+.clock-c {
+  left: 50%;
+  top: 50%;
+  width: 5rpx;
+  height: 5rpx;
+  margin: -2.5rpx 0 0 -2.5rpx;
+  border-radius: 50%;
+}
+
+/* file */
+.file {
+  left: 22%;
+  right: 22%;
+  top: 12%;
+  bottom: 12%;
+  border-radius: 4rpx;
+}
+.file-ear {
+  top: 12%;
+  right: 22%;
+  width: 18%;
+  height: 15%;
+  border-top: 0;
+  border-right: 0;
+  background: #0b1220;
+}
+.file-l {
+  left: 34%;
+  height: 2.4rpx;
+  border-radius: 2rpx;
+}
+.file-l1 { top: 46%; width: 34%; }
+.file-l2 { top: 58%; width: 34%; }
+.file-l3 { top: 70%; width: 22%; }
+
+/* dice */
+.dice {
+  inset: 14%;
+  border-radius: 8rpx;
+}
+.dd {
+  width: 7rpx;
+  height: 7rpx;
+  border-radius: 50%;
+}
+.d1 { left: 28%; top: 28%; }
+.d2 { right: 28%; top: 28%; }
+.d3 { left: 50%; top: 50%; margin: -3.5rpx 0 0 -3.5rpx; }
+.d4 { left: 28%; bottom: 28%; }
+.d5 { right: 28%; bottom: 28%; }
+
+/* users */
+.uh {
+  border-radius: 50%;
+}
+.uh1 {
+  left: 20%;
+  top: 12%;
+  width: 28%;
+  height: 28%;
+}
+.ub1 {
+  left: 10%;
+  top: 48%;
+  width: 48%;
+  height: 34%;
+  border-radius: 22rpx 22rpx 4rpx 4rpx;
+}
+.uh2 {
+  right: 14%;
+  top: 20%;
+  width: 22%;
+  height: 22%;
+  opacity: 0.85;
+}
+.ub2 {
+  right: 8%;
+  top: 50%;
+  width: 36%;
+  height: 28%;
+  border-radius: 18rpx 18rpx 4rpx 4rpx;
+  opacity: 0.85;
+}
+
+/* code */
+.br-l {
+  left: 16%;
+  top: 18%;
+  width: 16%;
+  height: 64%;
+  border-right: 0;
+  border-radius: 6rpx 0 0 6rpx;
+}
+.br-r {
+  right: 16%;
+  top: 18%;
+  width: 16%;
+  height: 64%;
+  border-left: 0;
+  border-radius: 0 6rpx 6rpx 0;
+}
+.slash {
+  left: 50%;
+  top: 24%;
+  width: 2.4rpx;
+  height: 52%;
+  margin-left: -1.2rpx;
+  border-radius: 2rpx;
+  transform: rotate(16deg);
+}
+
+/* drop */
+.drop {
+  left: 50%;
+  top: 18%;
+  width: 42%;
+  height: 42%;
+  margin-left: -21%;
+  border-radius: 50% 50% 50% 4%;
+  transform: rotate(45deg);
+}
+.drop-hi {
+  left: 38%;
+  top: 34%;
+  width: 8%;
+  height: 12%;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+/* search */
+.search-c {
+  left: 14%;
+  top: 14%;
+  width: 52%;
+  height: 52%;
+  border-radius: 50%;
+}
+.search-l {
+  right: 16%;
+  bottom: 20%;
+  width: 26%;
+  height: 2.4rpx;
+  border-radius: 2rpx;
+  transform: rotate(45deg);
+  transform-origin: left center;
+}
+
+.fallback {
+  inset: 18%;
+  border-radius: 8rpx;
+}
+
+/* light theme tone */
+.ico-light .s {
+  border-color: #2563eb;
+}
+.ico-light .f {
+  background: #2563eb;
+}
+/* food */
+.bowl {
+  left: 14%;
+  right: 14%;
+  top: 38%;
+  bottom: 18%;
+  border-radius: 0 0 42% 42%;
+  border-top-width: 2.4rpx;
+}
+.bowl-base {
+  left: 30%;
+  right: 30%;
+  bottom: 12%;
+  height: 7%;
+  border-radius: 4rpx;
+}
+.steam {
+  width: 2.4rpx;
+  border-radius: 2rpx;
+  opacity: 0.9;
+}
+.steam1 { left: 34%; top: 16%; height: 18%; }
+.steam2 { left: 50%; top: 12%; height: 22%; margin-left: -1.2rpx; }
+.steam3 { right: 34%; top: 18%; height: 16%; }
+
+/* password */
+.lock-body {
+  left: 24%;
+  right: 24%;
+  top: 42%;
+  bottom: 16%;
+  border-radius: 6rpx;
+}
+.lock-shackle {
+  left: 32%;
+  right: 32%;
+  top: 16%;
+  height: 32%;
+  border-radius: 18rpx 18rpx 0 0;
+  border-bottom: 0;
+  background: transparent !important;
+}
+.lock-key {
+  left: 50%;
+  top: 56%;
+  width: 8rpx;
+  height: 8rpx;
+  margin-left: -4rpx;
+  border-radius: 50%;
+}
+
+/* pomodoro */
+.tomato {
+  left: 18%;
+  right: 18%;
+  top: 28%;
+  bottom: 14%;
+  border-radius: 50% 50% 46% 46%;
+}
+.tomato-leaf {
+  top: 16%;
+  width: 16%;
+  height: 12%;
+  border-radius: 50%;
+}
+.leaf-a { left: 34%; transform: rotate(-30deg); }
+.leaf-b { right: 34%; transform: rotate(30deg); }
+.tomato-hi {
+  left: 34%;
+  top: 40%;
+  width: 10%;
+  height: 12%;
+  border-radius: 50%;
+  opacity: 0.75;
+}
+
+/* loan */
+.house {
+  left: 22%;
+  right: 22%;
+  top: 44%;
+  bottom: 16%;
+  border-radius: 3rpx;
+}
+.roof-l,
+.roof-r {
+  top: 26%;
+  width: 2.4rpx;
+  height: 28%;
+  border-radius: 2rpx;
+  transform-origin: bottom center;
+}
+.roof-l {
+  left: 50%;
+  margin-left: -1.2rpx;
+  transform: rotate(-48deg) translateX(-18rpx);
+}
+.roof-r {
+  left: 50%;
+  margin-left: -1.2rpx;
+  transform: rotate(48deg) translateX(18rpx);
+}
+.house-door {
+  left: 50%;
+  bottom: 16%;
+  width: 16%;
+  height: 22%;
+  margin-left: -8%;
+  border-radius: 2rpx 2rpx 0 0;
+  z-index: 1;
+}
+
+/* discount - price tag % */
+.tag-body {
+  left: 16%;
+  right: 16%;
+  top: 20%;
+  bottom: 20%;
+  border-radius: 8rpx 8rpx 8rpx 18rpx;
+  transform: rotate(-18deg);
+}
+.tag-hole {
+  left: 28%;
+  top: 30%;
+  width: 10%;
+  height: 10%;
+  border-radius: 50%;
+  opacity: 0.95;
+}
+.tag-pct {
+  width: 7rpx;
+  height: 7rpx;
+  border-radius: 50%;
+}
+.tag-pct1 {
+  right: 30%;
+  top: 34%;
+}
+.tag-pct2 {
+  left: 34%;
+  bottom: 30%;
+}
+.tag-slash {
+  left: 50%;
+  top: 30%;
+  width: 2.4rpx;
+  height: 42%;
+  margin-left: -1.2rpx;
+  border-radius: 2rpx;
+  transform: rotate(-28deg);
+}
+
+/* countdown - calendar */
+.cal-body {
+  left: 18%;
+  right: 18%;
+  top: 22%;
+  bottom: 14%;
+  border-radius: 6rpx;
+}
+.cal-top {
+  left: 18%;
+  right: 18%;
+  top: 22%;
+  height: 18%;
+  border-radius: 6rpx 6rpx 0 0;
+  opacity: 0.95;
+}
+.cal-ring {
+  top: 14%;
+  width: 2.8rpx;
+  height: 16%;
+  border-radius: 2rpx;
+}
+.cal-ring-l { left: 32%; }
+.cal-ring-r { right: 32%; }
+.cal-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  top: 54%;
+}
+.cal-d1 { left: 30%; }
+.cal-d2 { left: 50%; margin-left: -4rpx; }
+.cal-d3 { right: 30%; }
+
+/* todo - checklist */
+.check-box {
+  left: 16%;
+  top: 22%;
+  width: 28%;
+  height: 28%;
+  border-radius: 5rpx;
+}
+.check-tick {
+  left: 24%;
+  top: 30%;
+  width: 10%;
+  height: 18%;
+  border-radius: 2rpx;
+  transform: rotate(40deg);
+  opacity: 0.95;
+}
+.check-line {
+  height: 2.4rpx;
+  border-radius: 2rpx;
+  left: 52%;
+  right: 16%;
+}
+.check-l1 { top: 32%; }
+.check-l2 { top: 52%; width: 28%; right: auto; }
+
+/* todo check refine */
+.check-tick {
+  border-left: 0 !important;
+  border-top: 0 !important;
+  border-right-width: 3rpx;
+  border-bottom-width: 3rpx;
+  background: transparent !important;
+  border-radius: 0 0 2rpx 0;
+  transform: rotate(40deg);
+  width: 10%;
+  height: 18%;
+  left: 20%;
+  top: 28%;
+}
+
+/* todo check refine */
+.check-tick {
+  border-style: solid;
+  border-color: #5ce1ff;
+  border-left: 0 !important;
+  border-top: 0 !important;
+  border-right-width: 3.2rpx;
+  border-bottom-width: 3.2rpx;
+  background: transparent !important;
+  border-radius: 0 0 2rpx 0;
+  transform: rotate(40deg);
+  width: 12%;
+  height: 20%;
+  left: 20%;
+  top: 26%;
+}
+.ico-light .check-tick {
+  border-color: #2563eb;
+  background: transparent !important;
+}
+/* light theme hard-coded fills */
+.ico-light .file-ear {
+  background: #ffffff !important;
+}
+.ico-light .lock-shackle {
+  background: transparent !important;
+}
+
+/* weight scale */
+.scale-base {
+  left: 18%;
+  right: 18%;
+  top: 42%;
+  bottom: 18%;
+  border-radius: 10%;
+  border: 2rpx solid currentColor;
+}
+.scale-dial {
+  left: 30%;
+  right: 30%;
+  top: 18%;
+  height: 28%;
+  border: 2rpx solid currentColor;
+  border-radius: 50% 50% 40% 40%;
+  background: transparent;
+}
+.scale-needle {
+  left: 48%;
+  width: 4%;
+  top: 22%;
+  height: 20%;
+  background: currentColor;
+  border-radius: 2rpx;
+  transform: rotate(18deg);
+  transform-origin: bottom center;
+}
+.scale-foot {
+  width: 10%;
+  height: 8%;
+  bottom: 12%;
+  background: currentColor;
+  border-radius: 2rpx;
+  opacity: 0.85;
+}
+.scale-foot-l { left: 24%; }
+.scale-foot-r { right: 24%; left: auto; }

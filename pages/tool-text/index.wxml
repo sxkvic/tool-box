@@ -1,0 +1,37 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" free="{{true}}" />
+
+  <view class="card">
+    <view class="card-title">输入文本</view>
+    <textarea
+      class="textarea"
+      placeholder="粘贴或输入要统计的文本…"
+      maxlength="-1"
+      value="{{text}}"
+      bindinput="onInput"
+      show-confirm-bar="{{false}}"
+    />
+    <view class="row-btns">
+      <button class="btn-ghost flex-btn" bindtap="onClear">清空</button>
+      <button class="btn-ghost flex-btn" bindtap="onPaste">粘贴</button>
+      <button class="btn-primary flex-btn calc" bindtap="onStat">统计</button>
+    </view>
+  </view>
+
+  <view class="stats" wx:if="{{show}}">
+    <view class="stat-item" wx:for="{{stats}}" wx:key="label">
+      <view class="stat-num">{{item.value}}</view>
+      <view class="stat-label">{{item.label}}</view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{show}}">
+    <view class="card-title">快捷处理</view>
+    <button class="btn-ghost block" bindtap="trimAll">去除首尾空白</button>
+    <button class="btn-ghost block" bindtap="removeSpaces">去除全部空格</button>
+    <button class="btn-ghost block" bindtap="removeEmptyLines">去除空行</button>
+    <button class="btn-ghost block" bindtap="copyTextBtn">复制全文</button>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

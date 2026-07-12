@@ -1,0 +1,67 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" />
+
+  <view class="card">
+    <view class="card-title">长度</view>
+    <picker mode="selector" range="{{lengthOptions}}" value="{{lengthIndex}}" bindchange="onLengthChange">
+      <view class="picker-value">{{length}} 位 ▾</view>
+    </picker>
+  </view>
+
+  <view class="card">
+    <view class="card-title">字符集</view>
+    <view class="opt-grid">
+      <view class="opt {{lower ? 'on' : ''}}" data-key="lower" bindtap="onToggle">
+        <text class="opt-k">a-z</text>
+        <text class="opt-v">小写</text>
+      </view>
+      <view class="opt {{upper ? 'on' : ''}}" data-key="upper" bindtap="onToggle">
+        <text class="opt-k">A-Z</text>
+        <text class="opt-v">大写</text>
+      </view>
+      <view class="opt {{digit ? 'on' : ''}}" data-key="digit" bindtap="onToggle">
+        <text class="opt-k">0-9</text>
+        <text class="opt-v">数字</text>
+      </view>
+      <view class="opt {{symbol ? 'on' : ''}}" data-key="symbol" bindtap="onToggle">
+        <text class="opt-k">#@!</text>
+        <text class="opt-v">符号</text>
+      </view>
+    </view>
+    <view class="section-tip" style="margin-top: 16rpx;">仅在本机生成，不上传服务器</view>
+  </view>
+
+  <button
+    class="btn-primary"
+    type="default"
+    hover-class="btn-primary-hover"
+    disabled="{{generating}}"
+    bindtap="onGenerate"
+  >{{generating ? '生成中…' : '生成密码'}}</button>
+
+  <view class="result-box" wx:if="{{password}}">
+    <view class="result-label">生成结果</view>
+    <view class="pwd-line">{{password}}</view>
+    <view class="str-row">
+      <text class="str-label">强度</text>
+      <view class="str-bars">
+        <view class="str-bar {{strengthLevel >= 1 ? 'on' : ''}}"></view>
+        <view class="str-bar {{strengthLevel >= 2 ? 'on' : ''}}"></view>
+        <view class="str-bar {{strengthLevel >= 3 ? 'on' : ''}}"></view>
+        <view class="str-bar {{strengthLevel >= 4 ? 'on' : ''}}"></view>
+      </view>
+      <text class="str-text" style="color: {{strengthColor}};">{{strengthLabel}}</text>
+    </view>
+    <button class="btn-ghost" type="default" style="margin-top: 20rpx; width: 100%;" bindtap="onCopy">复制密码</button>
+  </view>
+
+  <view class="card" wx:if="{{history.length}}">
+    <view class="card-title">最近生成</view>
+    <view class="hist" wx:for="{{history}}" wx:key="*this" data-v="{{item}}" bindtap="onCopyHist">
+      <text class="hist-pwd">{{item}}</text>
+      <text class="hist-copy">复制</text>
+    </view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>

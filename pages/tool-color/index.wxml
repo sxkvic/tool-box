@@ -1,0 +1,46 @@
+<view class="container theme-{{theme}}">
+  <quota-bar id="quotaBar" free="{{true}}" />
+
+  <view class="card">
+    <view class="card-title">HEX</view>
+    <input class="input" placeholder="#5CE1FF 或 5CE1FF" value="{{hex}}" bindinput="onHex" />
+    <button class="btn-ghost" style="margin-top: 18rpx; width: 100%;" bindtap="hexToRgb">HEX → RGB</button>
+  </view>
+
+  <view class="card">
+    <view class="card-title">RGB</view>
+    <view class="row">
+      <input class="input flex-1" type="number" placeholder="R" value="{{r}}" bindinput="onR" />
+      <input class="input flex-1" type="number" placeholder="G" value="{{g}}" bindinput="onG" />
+      <input class="input flex-1" type="number" placeholder="B" value="{{b}}" bindinput="onB" />
+    </view>
+    <button class="btn-ghost" style="margin-top: 18rpx; width: 100%;" bindtap="rgbToHex">RGB → HEX</button>
+  </view>
+
+  <view class="preview-card" wx:if="{{preview}}">
+    <view class="swatch" style="background: {{preview}}"></view>
+    <view class="preview-info">
+      <view class="result-label">颜色预览</view>
+      <view class="pv-line" data-v="{{outHex}}" bindtap="onCopy">{{outHex}}</view>
+      <view class="pv-line" data-v="{{outRgb}}" bindtap="onCopy">{{outRgb}}</view>
+      <view class="section-tip" style="margin: 12rpx 0 0;">点击色值可复制</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">常用色板</view>
+    <view class="palette">
+      <view
+        class="p-item"
+        wx:for="{{palette}}"
+        wx:key="hex"
+        style="background: {{item.hex}}"
+        data-hex="{{item.hex}}"
+        bindtap="pickPalette"
+      ></view>
+    </view>
+  </view>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>
+

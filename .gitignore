@@ -1,0 +1,24 @@
+﻿# 微信开发者工具 / 本地
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 依赖与构建
+node_modules/
+miniprogram_npm/
+dist/
+build/
+
+# 微信私有配置（本机路径、本地调试）
+project.private.config.json
+
+# 环境与密钥
+.env
+.env.*
+*.pem
+*.key
+secrets/
