@@ -1,3 +1,16 @@
+<page-meta
+  background-text-style="{{bgTextStyle}}"
+  background-color="{{chromeBg}}"
+  root-background-color="{{chromeBg}}"
+  page-style="background-color: {{chromeBg}};"
+/>
+<app-nav-bar
+  title="随身工具箱"
+  theme="{{theme}}"
+  background="{{navBg}}"
+  color="{{navFront}}"
+  left="none"
+/>
 <view class="page theme-{{theme}} {{pageAnimClass}}">
   <view class="bg-layer" aria-hidden="true">
     <view class="orb orb-a"></view>

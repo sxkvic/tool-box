@@ -1,3 +1,16 @@
+<page-meta
+  background-text-style="{{bgTextStyle}}"
+  background-color="{{chromeBg}}"
+  root-background-color="{{chromeBg}}"
+  page-style="background-color: {{chromeBg}};"
+/>
+<app-nav-bar
+  title="饮食日记"
+  theme="{{theme}}"
+  background="{{navBg}}"
+  color="{{navFront}}"
+  left="back"
+/>
 <view class="container theme-{{theme}} diet-page">
   <view class="card day-bar">
     <view class="day-nav">

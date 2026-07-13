@@ -1,4 +1,17 @@
-<view class="container theme-{{theme}} weight-settings">
+<page-meta
+  background-text-style="{{bgTextStyle}}"
+  background-color="{{chromeBg}}"
+  root-background-color="{{chromeBg}}"
+  page-style="background-color: {{chromeBg}}; {{datePickerOn ? 'overflow: hidden;' : ''}}"
+/>
+<app-nav-bar
+  title="档案与目标"
+  theme="{{theme}}"
+  background="{{navBg}}"
+  color="{{navFront}}"
+  left="back"
+/>
+<view class="container theme-{{theme}} weight-settings {{datePickerOn ? 'page-locked' : ''}}">
   <view class="card">
     <view class="card-title">身体档案</view>
     <view class="section-tip">用于 BMI / 理想体重 / 体脂估算，仅保存在本机</view>
@@ -14,36 +27,36 @@
       >{{item.label}}</view>
     </view>
 
-    <view class="field-label">年龄</view>
-    <input class="input" type="number" placeholder="例如 28" value="{{age}}" bindinput="onAge" />
-
-    <view class="field-label">身高 (cm)</view>
-    <input class="input" type="digit" placeholder="例如 170" value="{{heightCm}}" bindinput="onHeight" />
-
-    <button class="btn-primary" type="default" bindtap="onSaveProfile">保存档案</button>
+    <view class="field-row">
+      <view class="field-col">
+        <view class="field-label">年龄</view>
+        <input class="input" type="number" placeholder="例如 28" value="{{age}}" bindinput="onAge" />
+      </view>
+      <view class="field-col">
+        <view class="field-label">身高 (cm)</view>
+        <input class="input" type="digit" placeholder="例如 170" value="{{heightCm}}" bindinput="onHeight" />
+      </view>
+    </view>
   </view>
 
   <view class="card">
-    <view class="card-title">体重目标</view>
-    <view class="section-tip">设置后仪表盘将显示进度与建议周变化</view>
+    <view class="card-title-row">
+      <view class="card-title" style="margin-bottom:0;">体重目标</view>
+      <view class="text-action" wx:if="{{targetKg || startKg}}" bindtap="onClearGoal">清除</view>
+    </view>
+    <view class="section-tip">设置后首页显示进度与建议周变化</view>
 
     <view class="field-label">目标体重 (kg)</view>
     <input class="input" type="digit" placeholder="例如 62.0" value="{{targetKg}}" bindinput="onTarget" />
 
     <view class="field-label">目标日期（可选）</view>
-    <picker mode="date" value="{{deadline}}" bindchange="onDeadline">
-      <view class="picker-value">{{deadline || '选择日期 ▾'}}</view>
-    </picker>
+    <view class="picker-value" bindtap="openDeadlinePicker">{{deadline || '选择日期 ▾'}}</view>
 
     <view class="meta-row" wx:if="{{startKg}}">
-      <text>起始体重 {{startKg}} kg</text>
+      <text>起始 {{startKg}} kg</text>
       <text wx:if="{{startDate}}">自 {{startDate}}</text>
     </view>
-
-    <button class="btn-primary" type="default" bindtap="onSaveGoal">保存目标</button>
-    <button class="btn-ghost" type="default" style="margin-top: 16rpx;" bindtap="onClearGoal">清除目标</button>
   </view>
-
 
   <view class="card">
     <view class="card-title">饮食热量目标</view>
@@ -75,10 +88,55 @@
     </view>
 
     <view class="field-label">自定义每日热量 (kcal，可空)</view>
-    <input class="input" type="number" placeholder="留空则按 TDEE + 模式自动估算" value="{{customKcal}}" bindinput="onCustomKcal" />
-
-    <button class="btn-primary" type="default" bindtap="onSaveDiet">保存饮食目标</button>
+    <input class="input" type="number" placeholder="留空则自动估算" value="{{customKcal}}" bindinput="onCustomKcal" />
   </view>
 
   <view class="foot-note">建议每周体重变化控制在 0.25–1.0 kg，循序渐进更可持续。</view>
+  <view class="bottom-space"></view>
+</view>
+
+<view class="save-bar theme-{{theme}}">
+  <button class="btn-primary save-btn" type="default" bindtap="onSaveAll" loading="{{saving}}" disabled="{{saving}}">保存设置</button>
+</view>
+
+<!-- 自定义日期选择：跟随主题，避免原生白底突兀 -->
+<view class="sheet-mask theme-{{theme}} {{datePickerOn ? 'on' : ''}}" bindtap="closeDeadlinePicker" catchtouchmove="preventMove" wx:if="{{datePickerOn}}"></view>
+<view class="date-sheet theme-{{theme}} {{datePickerOn ? 'on' : ''}}" catchtouchmove="preventMove" wx:if="{{datePickerOn}}">
+  <view class="date-handle"></view>
+  <view class="date-sheet-head">
+    <view class="date-sheet-title">选择目标日期</view>
+    <view class="date-close" bindtap="closeDeadlinePicker">✕</view>
+  </view>
+  <view class="date-preview">
+    <text class="date-preview-label">已选</text>
+    <text class="date-preview-value">{{dateDraftText}}</text>
+  </view>
+  <view class="date-picker-wrap">
+    <picker-view
+      class="date-picker-view"
+      value="{{datePickerValue}}"
+      bindchange="onDatePickerChange"
+      indicator-style="{{dateIndicatorStyle}}"
+      mask-style="{{dateMaskStyle}}"
+    >
+      <picker-view-column>
+        <view class="date-opt" wx:for="{{dateYears}}" wx:key="*this">{{item}}</view>
+      </picker-view-column>
+      <picker-view-column>
+        <view class="date-opt" wx:for="{{dateMonths}}" wx:key="*this">{{item}}</view>
+      </picker-view-column>
+      <picker-view-column>
+        <view class="date-opt" wx:for="{{dateDays}}" wx:key="*this">{{item}}</view>
+      </picker-view-column>
+    </picker-view>
+    <view class="date-unit-row">
+      <text class="date-unit">年</text>
+      <text class="date-unit">月</text>
+      <text class="date-unit">日</text>
+    </view>
+  </view>
+  <view class="date-actions">
+    <button class="btn-ghost date-btn" type="default" bindtap="clearDeadlineDraft">清除</button>
+    <button class="btn-primary date-btn" type="default" bindtap="confirmDeadline">完成</button>
+  </view>
 </view>

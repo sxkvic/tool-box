@@ -1,4 +1,5 @@
 const themeUtil = require('../../utils/theme')
+try { themeUtil.ensureTheme() } catch (e) {}
 const weightHub = require('../../utils/weight')
 
 function readTheme() {
@@ -10,16 +11,26 @@ function readTheme() {
 }
 
 Page({
-  data: {
-    theme: readTheme(),
+  data: (function () {
+    const chrome = themeUtil.getChrome(readTheme())
+    return {
+    theme: chrome.theme,
+    chromeBg: chrome.chromeBg,
+    navBg: chrome.navBg,
+    navFront: chrome.navFront,
+    bgTextStyle: chrome.bgTextStyle,
     list: [],
     count: 0,
     editOn: false,
     editId: '',
+    weightFocus: false,
+    keyboardHeight: 0,
+    sheetMaxHeight: "85vh",
     formWeight: '',
     formBodyFat: '',
     formNote: ''
-  },
+    }
+  })(),
 
   onLoad() {
     this.syncTheme()
@@ -31,10 +42,24 @@ Page({
     this.refresh()
   },
 
+  onUnload() {
+    if (this._focusTimer) {
+      clearTimeout(this._focusTimer)
+      this._focusTimer = null
+    }
+  },
+
   syncTheme() {
-    const id = themeUtil.ensureTheme()
-    if (id !== this.data.theme) this.setData({ theme: id })
-    else themeUtil.applyChrome(id)
+    const chrome = themeUtil.getChrome(themeUtil.ensureTheme())
+    if (
+      chrome.theme !== this.data.theme ||
+      chrome.chromeBg !== this.data.chromeBg ||
+      chrome.navBg !== this.data.navBg ||
+      chrome.navFront !== this.data.navFront ||
+      chrome.bgTextStyle !== this.data.bgTextStyle
+    ) {
+      this.setData(chrome)
+    }
   },
 
   refresh() {
@@ -52,21 +77,76 @@ Page({
     this.setData({ list, count: list.length })
   },
 
+  
+  _sheetMaxHeight(keyboardHeight) {
+    const h = Number(keyboardHeight) || 0
+    try {
+      const sys = wx.getSystemInfoSync() || {}
+      const winH = sys.windowHeight || 0
+      if (winH > 0) {
+        const maxPx = Math.max(280, Math.floor(winH * 0.85 - h))
+        return maxPx + 'px'
+      }
+    } catch (e) {}
+    return h > 0 ? ('calc(85vh - ' + h + 'px)') : '85vh'
+  },
+
   onEdit(e) {
     const id = e.currentTarget.dataset.id
     const item = (this.data.list || []).find((x) => x.id === id)
     if (!item) return
+    if (this._focusTimer) {
+      clearTimeout(this._focusTimer)
+      this._focusTimer = null
+    }
     this.setData({
       editOn: true,
       editId: id,
+      weightFocus: false,
+      keyboardHeight: 0,
+      sheetMaxHeight: this._sheetMaxHeight(0),
       formWeight: item.weight,
       formBodyFat: item.bf,
       formNote: item.note
     })
+    this._focusTimer = setTimeout(() => {
+      if (!this.data.editOn) return
+      this.setData({ weightFocus: true })
+    }, 280)
   },
 
   closeEdit() {
-    this.setData({ editOn: false, editId: '' })
+    if (this._focusTimer) {
+      clearTimeout(this._focusTimer)
+      this._focusTimer = null
+    }
+    this.setData({
+      editOn: false,
+      editId: '',
+      weightFocus: false,
+      keyboardHeight: 0,
+      sheetMaxHeight: this._sheetMaxHeight(0)
+    })
+  },
+
+  onWeightBlur() {
+    this.setData({ weightFocus: false })
+  },
+
+  onKeyboardHeight(e) {
+    if (!this.data.editOn) return
+    const h = (e && e.detail && e.detail.height) || 0
+    if (h === this.data.keyboardHeight) return
+    this.setData({
+      keyboardHeight: h,
+      sheetMaxHeight: this._sheetMaxHeight(h)
+    })
+  },
+
+  noop() {},
+
+  preventMove() {
+    // 拦截遮罩层滑动，配合 page-meta overflow:hidden 锁底层滚动
   },
 
   onFormWeight(e) {
@@ -88,7 +168,15 @@ Page({
         note: this.data.formNote
       })
       this._state = state
-      this.setData({ editOn: false })
+      if (this._focusTimer) {
+        clearTimeout(this._focusTimer)
+        this._focusTimer = null
+      }
+      this.setData({
+        editOn: false,
+        weightFocus: false,
+        keyboardHeight: 0
+      })
       wx.showToast({ title: '已更新', icon: 'success' })
       this.refresh()
     } catch (e) {

@@ -1,3 +1,16 @@
+<page-meta
+  background-text-style="{{bgTextStyle}}"
+  background-color="{{chromeBg}}"
+  root-background-color="{{chromeBg}}"
+  page-style="background-color: {{chromeBg}};"
+/>
+<app-nav-bar
+  title="添加食物"
+  theme="{{theme}}"
+  background="{{navBg}}"
+  color="{{navFront}}"
+  left="back"
+/>
 <view class="container theme-{{theme}} food-add-page">
   <view class="card head-card">
     <view class="head-row">
@@ -105,7 +118,9 @@
         placeholder="例如 150"
         value="{{grams}}"
         bindinput="onGrams"
-        focus="{{true}}"
+        focus="{{gramsFocus}}"
+        cursor-spacing="24"
+        hold-keyboard="{{true}}"
       />
       <view class="quick-row">
         <view

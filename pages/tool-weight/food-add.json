@@ -1,6 +1,9 @@
 {
   "navigationBarTitleText": "添加食物",
-  "navigationBarBackgroundColor": "#05070c",
-  "navigationBarTextStyle": "white",
-  "backgroundColor": "#05070c"
+  "navigationStyle": "custom",
+  "backgroundColor": "#eef2f7",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "app-nav-bar": "/components/app-nav-bar/app-nav-bar"
+  }
 }

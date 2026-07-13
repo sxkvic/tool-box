@@ -1,4 +1,5 @@
 const themeUtil = require('../../utils/theme')
+try { themeUtil.ensureTheme() } catch (e) {}
 const weightHub = require('../../utils/weight')
 const dietHub = require('../../utils/diet')
 const foodDb = require('../../utils/food-db')
@@ -20,8 +21,14 @@ function mealName(id) {
 }
 
 Page({
-  data: {
-    theme: readTheme(),
+  data: (function () {
+    const chrome = themeUtil.getChrome(readTheme())
+    return {
+    theme: chrome.theme,
+    chromeBg: chrome.chromeBg,
+    navBg: chrome.navBg,
+    navFront: chrome.navFront,
+    bgTextStyle: chrome.bgTextStyle,
     date: '',
     meal: 'snack',
     mealName: '加餐',
@@ -33,11 +40,13 @@ Page({
     recent: [],
     selected: null,
     grams: '',
+    gramsFocus: false,
     preview: null,
     quickGrams: QUICK_GRAMS,
     saving: false,
     saveLabel: '加入加餐'
-  },
+    }
+  })(),
 
   onLoad(query) {
     const meal = (query && query.meal) || 'snack'
@@ -69,9 +78,16 @@ Page({
   },
 
   syncTheme() {
-    const id = themeUtil.ensureTheme()
-    if (id !== this.data.theme) this.setData({ theme: id })
-    else themeUtil.applyChrome(id)
+    const chrome = themeUtil.getChrome(themeUtil.ensureTheme())
+    if (
+      chrome.theme !== this.data.theme ||
+      chrome.chromeBg !== this.data.chromeBg ||
+      chrome.navBg !== this.data.navBg ||
+      chrome.navFront !== this.data.navFront ||
+      chrome.bgTextStyle !== this.data.bgTextStyle
+    ) {
+      this.setData(chrome)
+    }
   },
 
   refreshList() {
@@ -143,12 +159,22 @@ Page({
         bg: v.bg
       },
       grams,
+      gramsFocus: false,
       preview
     })
+    if (this._gramsFocusTimer) clearTimeout(this._gramsFocusTimer)
+    this._gramsFocusTimer = setTimeout(() => {
+      if (!this.data.selected) return
+      this.setData({ gramsFocus: true })
+    }, 200)
   },
 
   clearSelected() {
-    this.setData({ selected: null, grams: '', preview: null })
+    if (this._gramsFocusTimer) {
+      clearTimeout(this._gramsFocusTimer)
+      this._gramsFocusTimer = null
+    }
+    this.setData({ selected: null, grams: '', gramsFocus: false, preview: null })
   },
 
   onGrams(e) {

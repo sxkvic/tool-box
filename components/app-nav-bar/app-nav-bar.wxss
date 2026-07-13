@@ -1,0 +1,97 @@
+.app-nav-root {
+  width: 100%;
+  position: relative;
+  z-index: 1000;
+}
+
+.app-nav {
+  width: 100%;
+  box-sizing: border-box;
+  /* 兜底高度，避免 measure 前高度为 0 */
+  min-height: 64px;
+}
+
+.app-nav.is-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.app-nav-status {
+  width: 100%;
+}
+
+.app-nav-bar {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12rpx 0 8rpx;
+  box-sizing: border-box;
+}
+
+.app-nav-left,
+.app-nav-right {
+  width: 96rpx;
+  min-width: 96rpx;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.app-nav-right {
+  justify-content: flex-end;
+}
+
+.app-nav-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-nav-btn-hover {
+  opacity: 0.55;
+  background: rgba(127, 127, 127, 0.14);
+}
+
+.app-nav-back-icon {
+  font-size: 52rpx;
+  line-height: 1;
+  font-weight: 300;
+  margin-top: -4rpx;
+}
+
+.app-nav-home-icon {
+  font-size: 34rpx;
+  line-height: 1;
+}
+
+.app-nav-title {
+  flex: 1;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 650;
+  letter-spacing: 1rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.app-nav-holder {
+  width: 100%;
+  /* 与 fixed 导航同高，防止内容顶上去 */
+  min-height: 64px;
+  pointer-events: none;
+}
+
+.theme-light .app-nav-btn-hover {
+  background: rgba(15, 23, 42, 0.06);
+}

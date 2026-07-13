@@ -105,7 +105,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  z-index: 40;
+  z-index: 999;
 }
 
 .sheet {
@@ -113,12 +113,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 50;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(180deg, #121a2c, #0a101c);
   border-radius: 28rpx 28rpx 0 0;
-  padding: 16rpx 28rpx calc(28rpx + env(safe-area-inset-bottom));
+  padding: 16rpx 28rpx 0;
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+  border-bottom: none;
   transform: translateY(110%);
-  transition: transform 0.28s ease;
+  transition: transform 0.28s ease, bottom 0.18s ease, max-height 0.18s ease;
+  max-height: 85vh;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .sheet.on { transform: translateY(0); }
@@ -145,15 +152,122 @@
   margin-bottom: 10rpx;
 }
 
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 8rpx;
+}
+
+.sheet-field-last {
+  margin-bottom: 8rpx;
+}
+
+.sheet-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 16rpx;
+  flex-shrink: 0;
+  margin-top: 8rpx;
+  padding: 16rpx 0 calc(20rpx + env(safe-area-inset-bottom));
+  background: inherit;
+  box-shadow: 0 -10rpx 24rpx rgba(0, 0, 0, 0.18);
+}
+
+.sheet-btn {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 !important;
+  height: 88rpx !important;
+  line-height: 88rpx !important;
+  font-size: 28rpx !important;
+  letter-spacing: 1rpx !important;
+  box-sizing: border-box;
+  padding: 0 12rpx !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sheet-actions .btn-primary,
+.sheet-actions .btn-ghost {
+  width: 0;
+}
+
+/* 弹层内次级按钮：深色主题提高对比度，避免“取消”看不清 */
+.sheet-actions .btn-ghost {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #f3f7ff !important;
+  border: 1rpx solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: none !important;
+}
+
+.sheet-actions .btn-ghost:active {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(147, 197, 253, 0.55) !important;
+  color: #ffffff !important;
+}
+
+.theme-light.sheet .sheet-actions .btn-ghost,
+.sheet.theme-light .sheet-actions .btn-ghost {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1rpx solid #e2e8f0 !important;
+  box-shadow: 0 4rpx 12rpx rgba(15, 23, 42, 0.04) !important;
+}
+
+.theme-light.sheet .sheet-actions .btn-ghost:active,
+.sheet.theme-light .sheet-actions .btn-ghost:active {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #2563eb !important;
+  box-shadow: none !important;
+}
+
+
+.sheet-btn::after {
+  border: none;
+}
+
 .theme-light .rec-actions {
   border-top-color: #eef2f7;
 }
 
 .theme-light .act.danger { color: #e11d48; }
 
-.theme-light .sheet {
+.theme-light.sheet-mask {
+  background: rgba(15, 23, 42, 0.28);
+}
+
+.theme-light.sheet,
+.sheet.theme-light {
   background: #ffffff;
+  color: #0f172a;
+  border-color: #e2e8f0;
   box-shadow: 0 -12rpx 40rpx rgba(15, 23, 42, 0.08);
 }
 
-.theme-light .sheet-handle { background: #e2e8f0; }
+.theme-light.sheet .sheet-title,
+.sheet.theme-light .sheet-title {
+  color: #0f172a;
+}
+
+.theme-light.sheet .sheet-label,
+.sheet.theme-light .sheet-label {
+  color: #64748b;
+}
+
+.theme-light.sheet .sheet-handle,
+.sheet.theme-light .sheet-handle {
+  background: #e2e8f0;
+}
+
+.theme-light.sheet .input,
+.sheet.theme-light .input {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1rpx solid transparent;
+  box-shadow: none;
+}

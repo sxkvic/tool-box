@@ -19,9 +19,20 @@ function readTheme() {
   }
 }
 
+// 页面脚本一加载就同步导航栏/窗口底色，抢在首帧前尽量贴合主题
+try {
+  themeUtil.ensureTheme()
+} catch (e) {}
+
 Page({
-  data: {
-    theme: readTheme(),
+  data: (function () {
+    const chrome = themeUtil.getChrome(readTheme())
+    return {
+    theme: chrome.theme,
+    chromeBg: chrome.chromeBg,
+    navBg: chrome.navBg,
+    navFront: chrome.navFront,
+    bgTextStyle: chrome.bgTextStyle,
     hasProfileHeight: false,
     hasRecords: false,
     currentWeight: '--',
@@ -51,6 +62,9 @@ Page({
     chartRange: '30',
     recentList: [],
     sheetOn: false,
+    weightFocus: false,
+    keyboardHeight: 0,
+    sheetMaxHeight: "85vh",
     formWeight: '',
     formBodyFat: '',
     formNote: '',
@@ -65,7 +79,8 @@ Page({
     dietPct: 0,
     dietMacroLine: 'P0 · F0 · C0',
     dietCount: 0
-  },
+    }
+  })(),
 
   onLoad() {
     recents.pushRecent('weight')
@@ -78,7 +93,15 @@ Page({
     this.refresh()
   },
 
+  onUnload() {
+    if (this._focusTimer) {
+      clearTimeout(this._focusTimer)
+      this._focusTimer = null
+    }
+  },
+
   onReady() {
+    try { themeUtil.ensureTheme() } catch (e) {}
     this._chartReady = true
     this.draw()
   },
@@ -96,9 +119,16 @@ Page({
   },
 
   syncTheme() {
-    const id = themeUtil.ensureTheme()
-    if (id !== this.data.theme) this.setData({ theme: id })
-    else themeUtil.applyChrome(id)
+    const chrome = themeUtil.getChrome(themeUtil.ensureTheme())
+    if (
+      chrome.theme !== this.data.theme ||
+      chrome.chromeBg !== this.data.chromeBg ||
+      chrome.navBg !== this.data.navBg ||
+      chrome.navFront !== this.data.navFront ||
+      chrome.bgTextStyle !== this.data.bgTextStyle
+    ) {
+      this.setData(chrome)
+    }
   },
 
   refresh() {
@@ -229,21 +259,74 @@ Page({
     this.refresh()
   },
 
+  
+  _sheetMaxHeight(keyboardHeight) {
+    const h = Number(keyboardHeight) || 0
+    try {
+      const sys = wx.getSystemInfoSync() || {}
+      const winH = sys.windowHeight || 0
+      if (winH > 0) {
+        const maxPx = Math.max(280, Math.floor(winH * 0.85 - h))
+        return maxPx + 'px'
+      }
+    } catch (e) {}
+    return h > 0 ? ('calc(85vh - ' + h + 'px)') : '85vh'
+  },
+
   openSheet() {
     const latest = this._stats && this._stats.latest
+    if (this._focusTimer) {
+      clearTimeout(this._focusTimer)
+      this._focusTimer = null
+    }
     this.setData({
       sheetOn: true,
+      weightFocus: false,
+      keyboardHeight: 0,
+      sheetMaxHeight: this._sheetMaxHeight(0),
       formWeight: latest ? String(latest.weight) : '',
       formBodyFat: '',
       formNote: ''
     })
+    // 等 sheet 动画结束再聚焦，避免系统顶页与弹层动画打架
+    this._focusTimer = setTimeout(() => {
+      if (!this.data.sheetOn) return
+      this.setData({ weightFocus: true })
+    }, 280)
   },
 
   closeSheet() {
-    this.setData({ sheetOn: false })
+    if (this._focusTimer) {
+      clearTimeout(this._focusTimer)
+      this._focusTimer = null
+    }
+    this.setData({
+      sheetOn: false,
+      weightFocus: false,
+      keyboardHeight: 0,
+      sheetMaxHeight: this._sheetMaxHeight(0)
+    })
+  },
+
+  onWeightBlur() {
+    this.setData({ weightFocus: false })
+  },
+
+  onKeyboardHeight(e) {
+    if (!this.data.sheetOn) return
+    const h = (e && e.detail && e.detail.height) || 0
+    if (h === this.data.keyboardHeight) return
+    this.setData({
+      keyboardHeight: h,
+      sheetMaxHeight: this._sheetMaxHeight(h)
+    })
   },
 
   noop() {},
+
+  preventMove() {
+    // 拦截遮罩层滑动，配合 page-meta overflow:hidden 锁底层滚动
+  },
 
   onFormWeight(e) {
     this.setData({ formWeight: e.detail.value })
@@ -267,7 +350,11 @@ Page({
         note: this.data.formNote
       })
       this._state = state
-      this.setData({ sheetOn: false })
+      if (this._focusTimer) {
+        clearTimeout(this._focusTimer)
+        this._focusTimer = null
+      }
+      this.setData({ sheetOn: false, weightFocus: false, keyboardHeight: 0 })
       wx.showToast({ title: '已记录', icon: 'success' })
       this.refresh()
     } catch (e) {

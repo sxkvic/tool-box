@@ -1,0 +1,33 @@
+<view class="app-nav-root">
+  <view
+    class="app-nav {{fixed ? 'is-fixed' : ''}} theme-{{theme}}"
+    style="{{wrapStyle}}"
+  >
+    <view class="app-nav-status" style="height: {{statusBarHeight}}px;"></view>
+    <view class="app-nav-bar" style="height: {{navBarHeight}}px;">
+      <view class="app-nav-left">
+        <view
+          wx:if="{{showBack}}"
+          class="app-nav-btn"
+          bindtap="onBack"
+          hover-class="app-nav-btn-hover"
+          hover-stay-time="80"
+        >
+          <text class="app-nav-back-icon">‹</text>
+        </view>
+        <view
+          wx:elif="{{showHome}}"
+          class="app-nav-btn"
+          bindtap="onHome"
+          hover-class="app-nav-btn-hover"
+          hover-stay-time="80"
+        >
+          <text class="app-nav-home-icon">⌂</text>
+        </view>
+      </view>
+      <text class="app-nav-title" style="color: {{titleColor}};">{{title}}</text>
+      <view class="app-nav-right"></view>
+    </view>
+  </view>
+  <view wx:if="{{fixed}}" class="app-nav-holder" style="height: {{totalHeight}}px;"></view>
+</view>

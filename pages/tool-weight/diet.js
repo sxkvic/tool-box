@@ -1,4 +1,5 @@
 const themeUtil = require('../../utils/theme')
+try { themeUtil.ensureTheme() } catch (e) {}
 const weightHub = require('../../utils/weight')
 const dietHub = require('../../utils/diet')
 const foodVisual = require('../../utils/food-visual')
@@ -12,8 +13,14 @@ function readTheme() {
 }
 
 Page({
-  data: {
-    theme: readTheme(),
+  data: (function () {
+    const chrome = themeUtil.getChrome(readTheme())
+    return {
+    theme: chrome.theme,
+    chromeBg: chrome.chromeBg,
+    navBg: chrome.navBg,
+    navFront: chrome.navFront,
+    bgTextStyle: chrome.bgTextStyle,
     date: '',
     dateLabel: '今天',
     targetKcal: 0,
@@ -36,7 +43,8 @@ Page({
     hasProfile: false,
     meals: [],
     tip: ''
-  },
+    }
+  })(),
 
   onLoad(query) {
     const date = (query && query.date) || weightHub.todayStr()
@@ -51,9 +59,16 @@ Page({
   },
 
   syncTheme() {
-    const id = themeUtil.ensureTheme()
-    if (id !== this.data.theme) this.setData({ theme: id })
-    else themeUtil.applyChrome(id)
+    const chrome = themeUtil.getChrome(themeUtil.ensureTheme())
+    if (
+      chrome.theme !== this.data.theme ||
+      chrome.chromeBg !== this.data.chromeBg ||
+      chrome.navBg !== this.data.navBg ||
+      chrome.navFront !== this.data.navFront ||
+      chrome.bgTextStyle !== this.data.bgTextStyle
+    ) {
+      this.setData(chrome)
+    }
   },
 
   refresh() {

@@ -1,3 +1,16 @@
+<page-meta
+  background-text-style="{{bgTextStyle}}"
+  background-color="{{chromeBg}}"
+  root-background-color="{{chromeBg}}"
+  page-style="background-color: {{chromeBg}}; {{sheetOn ? 'overflow: hidden;' : ''}}"
+/>
+<app-nav-bar
+  title="体重管理"
+  theme="{{theme}}"
+  background="{{navBg}}"
+  color="{{navFront}}"
+  left="back"
+/>
 <view class="container theme-{{theme}} weight-page">
   <!-- Hero -->
   <view class="hero-card card">
@@ -20,7 +33,14 @@
       </view>
     </view>
     <view class="hero-tip" wx:if="{{readyTip}}">{{readyTip}}</view>
-    <button class="btn-primary hero-btn" type="default" bindtap="openSheet">记录体重</button>
+    <view class="hero-cta" bindtap="openSheet" hover-class="hero-cta-hover" hover-stay-time="80">
+      <view class="hero-cta-icon">＋</view>
+      <view class="hero-cta-text">
+        <text class="hero-cta-title">记录体重</text>
+        <text class="hero-cta-sub">轻点记下今天的数据</text>
+      </view>
+      <text class="hero-cta-arrow">›</text>
+    </view>
   </view>
 
   <!-- Goal -->
@@ -141,7 +161,7 @@
     <view wx:if="{{!hasRecords}}" class="empty-block">
       <text class="empty-title">还没有记录</text>
       <text class="empty-desc">每天花 5 秒记一下，趋势才会说话</text>
-      <button class="btn-ghost" type="default" bindtap="openSheet">记下今天</button>
+      <view class="empty-cta" bindtap="openSheet" hover-class="hero-cta-hover" hover-stay-time="80">记下今天</view>
     </view>
     <view wx:else class="rec-list">
       <view class="rec-item" wx:for="{{recentList}}" wx:key="id">
@@ -159,28 +179,68 @@
   </view>
 
   <view class="ad-slot"><ad-banner /></view>
+</view>
 
-  <!-- Sheet -->
-  <view class="sheet-mask {{sheetOn ? 'on' : ''}}" bindtap="closeSheet" wx:if="{{sheetOn}}"></view>
-  <view class="sheet {{sheetOn ? 'on' : ''}}">
-    <view class="sheet-handle"></view>
-    <view class="sheet-title">记录体重</view>
+<!-- Sheet 挂在 container 外；关闭时 wx:if 移除，避免撑出空白滚动条；自带 theme 类保证浅色弹层生效 -->
+<view class="sheet-mask theme-{{theme}} {{sheetOn ? 'on' : ''}}" bindtap="closeSheet" catchtouchmove="preventMove" wx:if="{{sheetOn}}"></view>
+<view
+  class="sheet theme-{{theme}} on"
+  style="bottom: {{keyboardHeight}}px; max-height: {{sheetMaxHeight}};"
+  wx:if="{{sheetOn}}"
+>
+  <view class="sheet-handle"></view>
+  <view class="sheet-title">记录体重</view>
+  <view class="sheet-body">
     <view class="sheet-field">
       <text class="sheet-label">体重 (kg)</text>
-      <input class="input" type="digit" focus="{{sheetOn}}" placeholder="例如 65.5" value="{{formWeight}}" bindinput="onFormWeight" />
+      <input
+        class="input"
+        type="digit"
+        focus="{{weightFocus}}"
+        adjust-position="{{false}}"
+        hold-keyboard="{{true}}"
+        cursor-spacing="24"
+        placeholder="例如 65.5"
+        value="{{formWeight}}"
+        bindinput="onFormWeight"
+        bindblur="onWeightBlur"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
     </view>
     <view class="sheet-field">
       <text class="sheet-label">体脂 %（可选）</text>
-      <input class="input" type="digit" placeholder="有体脂秤再填" value="{{formBodyFat}}" bindinput="onFormFat" />
+      <input
+        class="input"
+        type="digit"
+        adjust-position="{{false}}"
+        hold-keyboard="{{true}}"
+        cursor-spacing="24"
+        placeholder="有体脂秤再填"
+        value="{{formBodyFat}}"
+        bindinput="onFormFat"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
     </view>
-    <view class="sheet-field">
+    <view class="sheet-field sheet-field-last">
       <text class="sheet-label">备注</text>
-      <input class="input" placeholder="可选" value="{{formNote}}" bindinput="onFormNote" maxlength="40" />
+      <input
+        class="input"
+        adjust-position="{{false}}"
+        hold-keyboard="{{true}}"
+        cursor-spacing="24"
+        placeholder="可选"
+        value="{{formNote}}"
+        bindinput="onFormNote"
+        maxlength="40"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
       <view class="chips">
         <view class="chip {{formNote === item ? 'on' : ''}}" wx:for="{{noteChips}}" wx:key="*this" data-v="{{item}}" bindtap="onChip">{{item}}</view>
       </view>
     </view>
-    <button class="btn-primary" type="default" bindtap="onSaveRecord">保存</button>
-    <button class="btn-ghost" type="default" style="margin-top: 16rpx;" bindtap="closeSheet">取消</button>
+  </view>
+  <view class="sheet-actions">
+    <button class="btn-ghost sheet-btn" type="default" bindtap="closeSheet">取消</button>
+    <button class="btn-primary sheet-btn" type="default" bindtap="onSaveRecord">保存</button>
   </view>
 </view>

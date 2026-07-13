@@ -1,4 +1,5 @@
 const themeUtil = require('../../utils/theme')
+try { themeUtil.ensureTheme() } catch (e) {}
 const weightHub = require('../../utils/weight')
 const dietHub = require('../../utils/diet')
 
@@ -10,9 +11,82 @@ function readTheme() {
   }
 }
 
+function pad2(n) {
+  return n < 10 ? '0' + n : '' + n
+}
+
+function daysInMonth(year, month) {
+  return new Date(year, month, 0).getDate()
+}
+
+
+function formatDraftText(y, m, d) {
+  return y + '年' + pad2(m) + '月' + pad2(d) + '日'
+}
+
+function dateChromeStyles(themeId) {
+  if (themeId === 'light') {
+    return {
+      dateIndicatorStyle: 'height: 76rpx; background: rgba(37, 99, 235, 0.08); border-top: 1px solid rgba(37, 99, 235, 0.22); border-bottom: 1px solid rgba(37, 99, 235, 0.22);',
+      dateMaskStyle: 'background-image: linear-gradient(180deg, rgba(248,250,252,0.96), rgba(248,250,252,0.55)), linear-gradient(0deg, rgba(248,250,252,0.96), rgba(248,250,252,0.55));'
+    }
+  }
+  return {
+    dateIndicatorStyle: 'height: 76rpx; background: rgba(92, 225, 255, 0.1); border-top: 1px solid rgba(92, 225, 255, 0.28); border-bottom: 1px solid rgba(92, 225, 255, 0.28);',
+    dateMaskStyle: 'background-image: linear-gradient(180deg, rgba(12,18,30,0.96), rgba(12,18,30,0.45)), linear-gradient(0deg, rgba(12,18,30,0.96), rgba(12,18,30,0.45));'
+  }
+}
+
+function buildDateMeta(selected) {
+  const now = new Date()
+  const startYear = now.getFullYear() - 1
+  const endYear = now.getFullYear() + 10
+  const years = []
+  for (let y = startYear; y <= endYear; y++) years.push(y)
+
+  const months = []
+  for (let m = 1; m <= 12; m++) months.push(m)
+
+  let y = now.getFullYear()
+  let m = now.getMonth() + 1
+  let d = now.getDate()
+  if (selected && /^\d{4}-\d{2}-\d{2}$/.test(selected)) {
+    const parts = selected.split('-').map((x) => parseInt(x, 10))
+    if (parts[0] >= startYear && parts[0] <= endYear) {
+      y = parts[0]
+      m = parts[1]
+      d = parts[2]
+    }
+  }
+  const maxDay = daysInMonth(y, m)
+  if (d > maxDay) d = maxDay
+  const days = []
+  for (let i = 1; i <= maxDay; i++) days.push(i)
+
+  const yi = Math.max(0, years.indexOf(y))
+  const mi = Math.max(0, m - 1)
+  const di = Math.max(0, d - 1)
+  return {
+    dateYears: years,
+    dateMonths: months,
+    dateDays: days,
+    datePickerValue: [yi, mi, di],
+    _dateY: y,
+    _dateM: m,
+    _dateD: d
+  }
+}
+
+
 Page({
-  data: {
-    theme: readTheme(),
+  data: (function () {
+    const chrome = themeUtil.getChrome(readTheme())
+    return {
+    theme: chrome.theme,
+    chromeBg: chrome.chromeBg,
+    navBg: chrome.navBg,
+    navFront: chrome.navFront,
+    bgTextStyle: chrome.bgTextStyle,
     gender: '',
     age: '',
     heightCm: '',
@@ -29,8 +103,18 @@ Page({
     mode: 'lose',
     activity: '1.55',
     customKcal: '',
-    dietHint: ''
-  },
+    dietHint: '',
+    saving: false,
+    datePickerOn: false,
+    dateYears: [],
+    dateMonths: [],
+    dateDays: [],
+    datePickerValue: [0, 0, 0],
+    dateDraftText: '',
+    dateIndicatorStyle: '',
+    dateMaskStyle: ''
+    }
+  })(),
 
   onLoad() {
     this.syncTheme()
@@ -43,9 +127,16 @@ Page({
   },
 
   syncTheme() {
-    const id = themeUtil.ensureTheme()
-    if (id !== this.data.theme) this.setData({ theme: id })
-    else themeUtil.applyChrome(id)
+    const chrome = themeUtil.getChrome(themeUtil.ensureTheme())
+    if (
+      chrome.theme !== this.data.theme ||
+      chrome.chromeBg !== this.data.chromeBg ||
+      chrome.navBg !== this.data.navBg ||
+      chrome.navFront !== this.data.navFront ||
+      chrome.bgTextStyle !== this.data.bgTextStyle
+    ) {
+      this.setData(chrome)
+    }
   },
 
   hydrate() {
@@ -85,42 +176,83 @@ Page({
   onTarget(e) {
     this.setData({ targetKg: e.detail.value })
   },
-  onDeadline(e) {
-    this.setData({ deadline: e.detail.value })
+  openDeadlinePicker() {
+    const meta = buildDateMeta(this.data.deadline)
+    const chrome = dateChromeStyles(this.data.theme)
+    this._dateDraft = {
+      y: meta._dateY,
+      m: meta._dateM,
+      d: meta._dateD
+    }
+    this.setData({
+      datePickerOn: true,
+      dateYears: meta.dateYears,
+      dateMonths: meta.dateMonths,
+      dateDays: meta.dateDays,
+      datePickerValue: meta.datePickerValue,
+      dateDraftText: formatDraftText(meta._dateY, meta._dateM, meta._dateD),
+      dateIndicatorStyle: chrome.dateIndicatorStyle,
+      dateMaskStyle: chrome.dateMaskStyle
+    })
   },
 
-  onSaveProfile() {
-    try {
-      const state = weightHub.updateProfile(this._state || weightHub.load(), {
-        gender: this.data.gender,
-        age: this.data.age,
-        heightCm: this.data.heightCm
+  closeDeadlinePicker() {
+    this.setData({ datePickerOn: false })
+  },
+
+  preventMove() {},
+
+  onDatePickerChange(e) {
+    const val = (e && e.detail && e.detail.value) || [0, 0, 0]
+    const years = this.data.dateYears || []
+    const months = this.data.dateMonths || []
+    let y = years[val[0]] || (new Date()).getFullYear()
+    let m = months[val[1]] || 1
+    const maxDay = daysInMonth(y, m)
+    let d = Math.min((val[2] || 0) + 1, maxDay)
+    const days = []
+    for (let i = 1; i <= maxDay; i++) days.push(i)
+    // 若天数变化导致索引越界，回写
+    const di = Math.max(0, d - 1)
+    this._dateDraft = { y, m, d }
+    const next = {
+      dateDays: days,
+      datePickerValue: [val[0], val[1], di],
+      dateDraftText: formatDraftText(y, m, d)
+    }
+    // 天数变化时同步 days，避免 2 月等越界
+    if ((this.data.dateDays || []).length !== days.length) {
+      this.setData(next)
+    } else {
+      this.setData({
+        datePickerValue: next.datePickerValue,
+        dateDraftText: next.dateDraftText
       })
-      this._state = state
-      wx.showToast({ title: '档案已保存', icon: 'success' })
-    } catch (e) {
-      wx.showToast({ title: '请检查输入', icon: 'none' })
     }
   },
 
-  onSaveGoal() {
-    const target = this.data.targetKg
-    if (!target) {
-      wx.showToast({ title: '请填写目标体重', icon: 'none' })
+  clearDeadlineDraft() {
+    this._dateDraft = null
+    this.setData({
+      deadline: '',
+      datePickerOn: false
+    })
+  },
+
+  confirmDeadline() {
+    const draft = this._dateDraft
+    if (!draft) {
+      this.setData({ datePickerOn: false })
       return
     }
-    const state = weightHub.updateGoal(this._state || weightHub.load(), {
-      targetKg: target,
-      deadline: this.data.deadline || '',
-      resetStart: true
-    })
-    this._state = state
+    const deadline = draft.y + '-' + pad2(draft.m) + '-' + pad2(draft.d)
     this.setData({
-      startKg: state.goal.startKg !== '' ? String(state.goal.startKg) : '',
-      startDate: state.goal.startDate || ''
+      deadline,
+      datePickerOn: false
     })
-    wx.showToast({ title: '目标已更新', icon: 'success' })
   },
+
+
 
   onMode(e) {
     this.setData({ mode: e.currentTarget.dataset.id })
@@ -131,25 +263,71 @@ Page({
   onCustomKcal(e) {
     this.setData({ customKcal: e.detail.value })
   },
-  onSaveDiet() {
+
+
+  onSaveAll() {
+    if (this.data.saving) return
+    this.setData({ saving: true })
     try {
-      const state = dietHub.updatePrefs(this._diet || dietHub.load(), {
+      // 1) profile
+      const state = weightHub.updateProfile(this._state || weightHub.load(), {
+        gender: this.data.gender,
+        age: this.data.age,
+        heightCm: this.data.heightCm
+      })
+      this._state = state
+
+      // 2) goal：有目标体重才写入；空值不强制清空（清空走「清除」）
+      const target = (this.data.targetKg || '').trim()
+      if (target) {
+        const next = weightHub.updateGoal(this._state, {
+          targetKg: target,
+          deadline: this.data.deadline || '',
+          resetStart: true
+        })
+        this._state = next
+        this.setData({
+          startKg: next.goal.startKg !== '' && next.goal.startKg != null ? String(next.goal.startKg) : '',
+          startDate: next.goal.startDate || ''
+        })
+      }
+
+      // 3) diet
+      const diet = dietHub.updatePrefs(this._diet || dietHub.load(), {
         mode: this.data.mode,
         activity: this.data.activity,
         customKcal: this.data.customKcal
       })
-      this._diet = state
-      const targets = dietHub.resolveTargets(state, this._state || weightHub.load())
+      this._diet = diet
+      const targets = dietHub.resolveTargets(diet, this._state || weightHub.load())
       const hint = targets.hasProfile
         ? ('估算 BMR ' + (targets.bmr || '--') + ' · TDEE ' + (targets.tdee || '--') + ' · 当前目标 ' + targets.targetKcal + ' kcal')
         : '完善身高体重年龄性别后，可自动估算热量目标'
       this.setData({
-        customKcal: state.prefs.customKcal !== '' && state.prefs.customKcal != null ? String(state.prefs.customKcal) : '',
-        dietHint: hint
+        customKcal: diet.prefs.customKcal !== '' && diet.prefs.customKcal != null ? String(diet.prefs.customKcal) : '',
+        dietHint: hint,
+        saving: false,
+    datePickerOn: false,
+    dateYears: [],
+    dateMonths: [],
+    dateDays: [],
+    datePickerValue: [0, 0, 0],
+    dateDraftText: '',
+    dateIndicatorStyle: '',
+    dateMaskStyle: ''
       })
-      wx.showToast({ title: '饮食目标已保存', icon: 'success' })
+      wx.showToast({ title: '已保存', icon: 'success' })
     } catch (e) {
-      wx.showToast({ title: '保存失败', icon: 'none' })
+      this.setData({ saving: false,
+    datePickerOn: false,
+    dateYears: [],
+    dateMonths: [],
+    dateDays: [],
+    datePickerValue: [0, 0, 0],
+    dateDraftText: '',
+    dateIndicatorStyle: '',
+    dateMaskStyle: '' })
+      wx.showToast({ title: '请检查输入', icon: 'none' })
     }
   },
 

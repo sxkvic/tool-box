@@ -1,4 +1,5 @@
 const themeUtil = require('../../utils/theme')
+try { themeUtil.ensureTheme() } catch (e) {}
 const recentsUtil = require('../../utils/recents')
 const { BASE_TOOLS, CATEGORIES, getToolsByIds } = require('../../utils/tools')
 
@@ -43,25 +44,33 @@ function makeFavSet(ids) {
 }
 
 Page({
-  data: {
+  data: (function () {
+    const chrome = themeUtil.getChrome()
+    const light = chrome.theme === 'light'
+    return {
     sections: [],
     recentTools: [],
     favTools: [],
     keyword: '',
     toolCount: BASE_TOOLS.length,
-    theme: 'mc',
-    themeLabel: '深空',
-    statusText: 'SYSTEM ONLINE',
-    heroSub: 'MISSION CONTROL · 纯前端工具合集',
-    themeIco: '☾',
+    theme: chrome.theme,
+    chromeBg: chrome.chromeBg,
+    navBg: chrome.navBg,
+    navFront: chrome.navFront,
+    bgTextStyle: chrome.bgTextStyle,
+    themeLabel: themeLabelOf(chrome.theme),
+    statusText: light ? 'READY' : 'SYSTEM ONLINE',
+    heroSub: light ? 'CLEAN LAB · 纯前端工具合集' : 'MISSION CONTROL · 纯前端工具合集',
+    themeIco: light ? '☀' : '☾',
     themeAnimating: false,
-    themeVeilTone: 'veil-to-mc',
+    themeVeilTone: light ? 'veil-to-light' : 'veil-to-mc',
     pageAnimClass: '',
     veilClass: '',
     switchClass: '',
     isSearch: false,
     hasQuick: false
-  },
+    }
+  })(),
 
   onLoad() {
     this.syncTheme()
@@ -75,8 +84,13 @@ Page({
 
   themeFields(id) {
     const light = id === 'light'
+    const chrome = themeUtil.getChrome(id)
     return {
       theme: id,
+      chromeBg: chrome.chromeBg,
+      navBg: chrome.navBg,
+      navFront: chrome.navFront,
+      bgTextStyle: chrome.bgTextStyle,
       themeLabel: themeLabelOf(id),
       statusText: light ? 'READY' : 'SYSTEM ONLINE',
       heroSub: light ? 'CLEAN LAB · 纯前端工具合集' : 'MISSION CONTROL · 纯前端工具合集',

@@ -16,7 +16,7 @@ const THEMES = {
     id: 'light',
     name: '纯白',
     desc: 'Clean Lab',
-    navBg: '#eef2f7',
+    navBg: '#f5f7fb',
     navFront: '#000000',
     bg: '#eef2f7'
   }
@@ -44,13 +44,21 @@ function getThemeOptions() {
   ]
 }
 
-function applyChrome(themeId) {
+/**
+ * 同步导航栏/窗口底色
+ * @param {string} themeId
+ * @param {{animate?: boolean}} [opts] 仅手动切换主题时开动画；刷新/进页默认无动画，避免顶部闪黑
+ */
+function applyChrome(themeId, opts) {
   const t = THEMES[themeId] || THEMES.mc
+  const animate = !!(opts && opts.animate)
   try {
     wx.setNavigationBarColor({
       frontColor: t.navFront,
       backgroundColor: t.navBg,
-      animation: { duration: 180, timingFunc: 'easeIn' }
+      animation: animate
+        ? { duration: 180, timingFunc: 'easeIn' }
+        : { duration: 0, timingFunc: 'linear' }
     })
   } catch (e) {}
   try {
@@ -72,7 +80,8 @@ function setTheme(themeId) {
   try {
     wx.setStorageSync(STORAGE_KEY, id)
   } catch (e) {}
-  applyChrome(id)
+  // 用户主动切换：保留轻微过渡
+  applyChrome(id, { animate: true })
   try {
     const app = getApp()
     if (app && app.globalData) app.globalData.theme = id
@@ -82,8 +91,21 @@ function setTheme(themeId) {
 
 function ensureTheme() {
   const id = getThemeId()
-  applyChrome(id)
+  applyChrome(id, { animate: false })
   return id
+}
+
+/** 给页面 data / page-meta 用的色值，首帧即可对齐，减少刷新闪色 */
+function getChrome(themeId) {
+  const id = THEMES[themeId] ? themeId : getThemeId()
+  const t = THEMES[id] || THEMES.mc
+  return {
+    theme: id,
+    chromeBg: t.bg,
+    navBg: t.navBg,
+    navFront: t.navFront,
+    bgTextStyle: id === 'light' ? 'dark' : 'light'
+  }
 }
 
 module.exports = {
@@ -91,6 +113,7 @@ module.exports = {
   getThemeId,
   getTheme,
   getThemeOptions,
+  getChrome,
   setTheme,
   applyChrome,
   ensureTheme

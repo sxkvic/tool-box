@@ -1,5 +1,5 @@
 .weight-page {
-  padding-bottom: 80rpx;
+  padding-bottom: 24rpx;
 }
 
 .hero-card {
@@ -79,8 +79,81 @@
   color: var(--text-secondary);
 }
 
-.hero-btn {
+/* 次级记录入口：不抢体重数字的主视觉 */
+.hero-cta {
   margin-top: 28rpx;
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 18rpx;
+  background: linear-gradient(135deg, rgba(92, 225, 255, 0.10), rgba(124, 156, 255, 0.06));
+  border: 1rpx solid rgba(92, 225, 255, 0.18);
+  box-sizing: border-box;
+}
+
+.hero-cta-hover {
+  opacity: 0.88;
+  background: linear-gradient(135deg, rgba(92, 225, 255, 0.16), rgba(124, 156, 255, 0.10));
+}
+
+.hero-cta-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent);
+  background: rgba(92, 225, 255, 0.12);
+  border: 1rpx solid rgba(92, 225, 255, 0.22);
+  flex-shrink: 0;
+}
+
+.hero-cta-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.hero-cta-title {
+  font-size: 28rpx;
+  font-weight: 650;
+  color: var(--text);
+  letter-spacing: 1rpx;
+}
+
+.hero-cta-sub {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+}
+
+.hero-cta-arrow {
+  font-size: 34rpx;
+  color: rgba(92, 225, 255, 0.55);
+  line-height: 1;
+  padding-right: 4rpx;
+}
+
+.empty-cta {
+  margin-top: 8rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200rpx;
+  height: 64rpx;
+  padding: 0 28rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(92, 225, 255, 0.08);
+  border: 1rpx solid rgba(92, 225, 255, 0.22);
 }
 
 .goal-row {
@@ -362,7 +435,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  z-index: 40;
+  z-index: 999;
 }
 
 .sheet {
@@ -370,16 +443,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 50;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(180deg, #121a2c, #0a101c);
   border-radius: 28rpx 28rpx 0 0;
-  padding: 16rpx 28rpx calc(28rpx + env(safe-area-inset-bottom));
+  padding: 16rpx 28rpx 0;
   border: 1rpx solid rgba(255, 255, 255, 0.08);
   border-bottom: none;
   transform: translateY(110%);
-  transition: transform 0.28s ease;
+  transition: transform 0.28s ease, bottom 0.18s ease, max-height 0.18s ease;
   max-height: 85vh;
-  overflow-y: auto;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .sheet.on {
@@ -409,6 +485,85 @@
   font-size: 22rpx;
   color: var(--text-secondary);
   margin-bottom: 10rpx;
+}
+
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 8rpx;
+}
+
+.sheet-field-last {
+  margin-bottom: 8rpx;
+}
+
+.sheet-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 16rpx;
+  flex-shrink: 0;
+  margin-top: 8rpx;
+  padding: 16rpx 0 calc(20rpx + env(safe-area-inset-bottom));
+  background: inherit;
+  box-shadow: 0 -10rpx 24rpx rgba(0, 0, 0, 0.18);
+}
+
+.sheet-btn {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 !important;
+  height: 88rpx !important;
+  line-height: 88rpx !important;
+  font-size: 28rpx !important;
+  letter-spacing: 1rpx !important;
+  box-sizing: border-box;
+  padding: 0 12rpx !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sheet-actions .btn-primary,
+.sheet-actions .btn-ghost {
+  width: 0;
+}
+
+/* 弹层内次级按钮：深色主题提高对比度，避免“取消”看不清 */
+.sheet-actions .btn-ghost {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #f3f7ff !important;
+  border: 1rpx solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: none !important;
+}
+
+.sheet-actions .btn-ghost:active {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(147, 197, 253, 0.55) !important;
+  color: #ffffff !important;
+}
+
+.theme-light.sheet .sheet-actions .btn-ghost,
+.sheet.theme-light .sheet-actions .btn-ghost {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1rpx solid #e2e8f0 !important;
+  box-shadow: 0 4rpx 12rpx rgba(15, 23, 42, 0.04) !important;
+}
+
+.theme-light.sheet .sheet-actions .btn-ghost:active,
+.sheet.theme-light .sheet-actions .btn-ghost:active {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #2563eb !important;
+  box-shadow: none !important;
+}
+
+
+.sheet-btn::after {
+  border: none;
 }
 
 .chips {
@@ -472,16 +627,56 @@
   border-bottom-color: #eef2f7;
 }
 
-.theme-light .sheet {
+.theme-light.sheet-mask {
+  background: rgba(15, 23, 42, 0.28);
+}
+
+.theme-light.sheet,
+.sheet.theme-light {
   background: #ffffff;
+  color: #0f172a;
   border-color: #e2e8f0;
   box-shadow: 0 -12rpx 40rpx rgba(15, 23, 42, 0.08);
 }
 
-.theme-light .sheet-handle {
+.theme-light.sheet .sheet-title,
+.sheet.theme-light .sheet-title {
+  color: #0f172a;
+}
+
+.theme-light.sheet .sheet-label,
+.sheet.theme-light .sheet-label {
+  color: #64748b;
+}
+
+.theme-light.sheet .sheet-handle,
+.sheet.theme-light .sheet-handle {
   background: #e2e8f0;
 }
 
+.theme-light.sheet .input,
+.sheet.theme-light .input {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1rpx solid transparent;
+  box-shadow: none;
+}
+
+.theme-light.sheet .chip,
+.sheet.theme-light .chip {
+  background: #f1f5f9;
+  border-color: transparent;
+  color: #64748b;
+}
+
+.theme-light.sheet .chip.on,
+.sheet.theme-light .chip.on {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+/* 兼容旧选择器，防止遗漏 */
 .theme-light .chip {
   background: #f1f5f9;
   border-color: transparent;
@@ -541,3 +736,29 @@
 }
 .theme-light .tone-ok { color: #16a34a; }
 .theme-light .tone-over { color: #e11d48; }
+
+/* light: hero record entry */
+.theme-light .hero-cta {
+  background: linear-gradient(135deg, #eff6ff, #f8fafc);
+  border-color: #dbeafe;
+}
+
+.theme-light .hero-cta-hover {
+  background: linear-gradient(135deg, #dbeafe, #f1f5f9);
+}
+
+.theme-light .hero-cta-icon {
+  color: #2563eb;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.theme-light .hero-cta-title { color: #0f172a; }
+.theme-light .hero-cta-sub { color: #64748b; }
+.theme-light .hero-cta-arrow { color: #93c5fd; }
+
+.theme-light .empty-cta {
+  color: #2563eb;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}

@@ -1,3 +1,16 @@
+<page-meta
+  background-text-style="{{bgTextStyle}}"
+  background-color="{{chromeBg}}"
+  root-background-color="{{chromeBg}}"
+  page-style="background-color: {{chromeBg}}; {{editOn ? 'overflow: hidden;' : ''}}"
+/>
+<app-nav-bar
+  title="体重记录"
+  theme="{{theme}}"
+  background="{{navBg}}"
+  color="{{navFront}}"
+  left="back"
+/>
 <view class="container theme-{{theme}} weight-records">
   <view class="card head-card">
     <view class="head-title">全部记录</view>
@@ -27,25 +40,62 @@
       <view class="act danger" data-id="{{item.id}}" bindtap="onDelete">删除</view>
     </view>
   </view>
+</view>
 
-  <!-- edit sheet -->
-  <view class="sheet-mask {{editOn ? 'on' : ''}}" bindtap="closeEdit" wx:if="{{editOn}}"></view>
-  <view class="sheet {{editOn ? 'on' : ''}}" wx:if="{{editOn}}">
-    <view class="sheet-handle"></view>
-    <view class="sheet-title">编辑记录</view>
+<!-- edit sheet 挂在 container 外；自带 theme 类保证浅色弹层生效 -->
+<view class="sheet-mask theme-{{theme}} {{editOn ? 'on' : ''}}" bindtap="closeEdit" catchtouchmove="preventMove" wx:if="{{editOn}}"></view>
+<view
+  class="sheet theme-{{theme}} {{editOn ? 'on' : ''}}"
+  style="bottom: {{keyboardHeight}}px; max-height: {{sheetMaxHeight}};"
+  wx:if="{{editOn}}"
+>
+  <view class="sheet-handle"></view>
+  <view class="sheet-title">编辑记录</view>
+  <view class="sheet-body">
     <view class="sheet-field">
       <text class="sheet-label">体重 (kg)</text>
-      <input class="input" type="digit" value="{{formWeight}}" bindinput="onFormWeight" />
+      <input
+        class="input"
+        type="digit"
+        focus="{{weightFocus}}"
+        adjust-position="{{false}}"
+        hold-keyboard="{{true}}"
+        cursor-spacing="24"
+        value="{{formWeight}}"
+        bindinput="onFormWeight"
+        bindblur="onWeightBlur"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
     </view>
     <view class="sheet-field">
       <text class="sheet-label">体脂 %（可选）</text>
-      <input class="input" type="digit" value="{{formBodyFat}}" bindinput="onFormFat" />
+      <input
+        class="input"
+        type="digit"
+        adjust-position="{{false}}"
+        hold-keyboard="{{true}}"
+        cursor-spacing="24"
+        value="{{formBodyFat}}"
+        bindinput="onFormFat"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
     </view>
-    <view class="sheet-field">
+    <view class="sheet-field sheet-field-last">
       <text class="sheet-label">备注</text>
-      <input class="input" value="{{formNote}}" bindinput="onFormNote" maxlength="40" />
+      <input
+        class="input"
+        adjust-position="{{false}}"
+        hold-keyboard="{{true}}"
+        cursor-spacing="24"
+        value="{{formNote}}"
+        bindinput="onFormNote"
+        maxlength="40"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
     </view>
-    <button class="btn-primary" type="default" bindtap="onSaveEdit">保存</button>
-    <button class="btn-ghost" type="default" style="margin-top: 16rpx;" bindtap="closeEdit">取消</button>
+  </view>
+  <view class="sheet-actions">
+    <button class="btn-ghost sheet-btn" type="default" bindtap="closeEdit">取消</button>
+    <button class="btn-primary sheet-btn" type="default" bindtap="onSaveEdit">保存</button>
   </view>
 </view>
