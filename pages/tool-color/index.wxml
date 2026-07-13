@@ -4,7 +4,9 @@
   <view class="card">
     <view class="card-title">HEX</view>
     <input class="input" placeholder="#5CE1FF 或 5CE1FF" value="{{hex}}" bindinput="onHex" />
-    <button class="btn-ghost" style="margin-top: 18rpx; width: 100%;" bindtap="hexToRgb">HEX → RGB</button>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="hexToRgb">HEX → RGB</button>
+    </view>
   </view>
 
   <view class="card">
@@ -14,7 +16,9 @@
       <input class="input flex-1" type="number" placeholder="G" value="{{g}}" bindinput="onG" />
       <input class="input flex-1" type="number" placeholder="B" value="{{b}}" bindinput="onB" />
     </view>
-    <button class="btn-ghost" style="margin-top: 18rpx; width: 100%;" bindtap="rgbToHex">RGB → HEX</button>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="rgbToHex">RGB → HEX</button>
+    </view>
   </view>
 
   <view class="preview-card" wx:if="{{preview}}">
@@ -43,4 +47,3 @@
 
   <view class="ad-slot"><ad-banner /></view>
 </view>
-

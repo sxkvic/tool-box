@@ -32,13 +32,14 @@
     <view class="stage-icon {{spinning ? 'spin' : ''}}">
       <tool-icon name="food" size="{{72}}"></tool-icon>
     </view>
-    <view class="stage-result {{spinning ? 'blur' : ''}}">{{result || '点下方决定命运'}}</view>
-    <view class="section-tip" style="margin: 8rpx 0 0; text-align: center;">纠结星人专属模块</view>
+    <view class="stage-result {{spinning ? 'blur' : ''}}">{{result || '还没决定吃什么'}}</view>
+    <view class="section-tip stage-tip">纠结星人专属模块 · 点下面一键开抽</view>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onDraw" disabled="{{spinning}}">
+        {{spinning ? '抽取中…' : (result ? '再抽一次' : '开始抽取')}}
+      </button>
+    </view>
   </view>
-
-  <button class="btn-primary" bindtap="onDraw" disabled="{{spinning}}">
-    {{spinning ? '抽取中…' : (result ? '再抽一次' : '今天吃什么')}}
-  </button>
 
   <view class="card" wx:if="{{history.length}}">
     <view class="card-title">最近结果</view>

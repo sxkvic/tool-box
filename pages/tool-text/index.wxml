@@ -11,10 +11,10 @@
       bindinput="onInput"
       show-confirm-bar="{{false}}"
     />
-    <view class="row-btns">
-      <button class="btn-ghost flex-btn" bindtap="onClear">清空</button>
-      <button class="btn-ghost flex-btn" bindtap="onPaste">粘贴</button>
-      <button class="btn-primary flex-btn calc" bindtap="onStat">统计</button>
+    <view class="card-actions">
+      <button class="btn-ghost" bindtap="onClear">清空</button>
+      <button class="btn-ghost" bindtap="onPaste">粘贴</button>
+      <button class="btn-primary" bindtap="onStat">统计</button>
     </view>
   </view>
 
@@ -27,10 +27,12 @@
 
   <view class="card" wx:if="{{show}}">
     <view class="card-title">快捷处理</view>
-    <button class="btn-ghost block" bindtap="trimAll">去除首尾空白</button>
-    <button class="btn-ghost block" bindtap="removeSpaces">去除全部空格</button>
-    <button class="btn-ghost block" bindtap="removeEmptyLines">去除空行</button>
-    <button class="btn-ghost block" bindtap="copyTextBtn">复制全文</button>
+    <view class="action-stack">
+      <button class="btn-ghost" bindtap="trimAll">去除首尾空白</button>
+      <button class="btn-ghost" bindtap="removeSpaces">去除全部空格</button>
+      <button class="btn-ghost" bindtap="removeEmptyLines">去除空行</button>
+      <button class="btn-ghost" bindtap="copyTextBtn">复制全文</button>
+    </view>
   </view>
 
   <view class="ad-slot"><ad-banner /></view>

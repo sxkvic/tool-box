@@ -177,6 +177,11 @@ Page({
     })
   },
 
+  onToggleRun() {
+    if (this.data.running) this.onPause()
+    else this.onStart()
+  },
+
   onStart() {
     if (this.data.running) return
     let remain = this.data.remainSec

@@ -15,9 +15,10 @@
         bindtap="onRadix"
       >{{item}} 进制</view>
     </view>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onConvert">开始转换</button>
+    </view>
   </view>
-
-  <button class="btn-primary" bindtap="onConvert">转换</button>
 
   <view class="card" wx:if="{{show}}">
     <view class="card-title">转换结果</view>

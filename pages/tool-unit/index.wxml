@@ -32,14 +32,18 @@
     <picker mode="selector" range="{{toUnits}}" range-key="label" value="{{toIndex}}" bindchange="onToChange">
       <view class="picker-value">{{toUnits[toIndex].label}} ▾</view>
     </picker>
-    <button class="btn-primary" bindtap="onConvert">开始换算</button>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onConvert">开始换算</button>
+    </view>
   </view>
 
   <view class="result-box" wx:if="{{result !== ''}}">
     <view class="result-label">换算结果</view>
     <view class="result-value">{{result}}</view>
     <view class="result-sub">{{inputValue}} {{fromUnits[fromIndex].label}} = {{result}} {{toUnits[toIndex].label}}</view>
-    <button class="btn-ghost" style="margin-top: 20rpx;" bindtap="onCopy">复制结果</button>
+    <view class="result-actions">
+      <button class="btn-ghost" bindtap="onCopy">复制结果</button>
+    </view>
   </view>
 
   <view class="ad-slot">

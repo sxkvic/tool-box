@@ -7,7 +7,9 @@
     <picker mode="date" value="{{date}}" bindchange="onDate">
       <view class="picker-value" style="margin-top: 16rpx;">{{date || '选择日期'}} ▾</view>
     </picker>
-    <button class="btn-primary" bindtap="onAdd">添加</button>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onAdd">添加纪念日</button>
+    </view>
   </view>
 
   <view class="card" wx:if="{{!empty}}">

@@ -192,9 +192,11 @@ page {
   border-radius: 14rpx;
   font-size: 30rpx;
   font-weight: 700;
-  letter-spacing: 4rpx;
+  letter-spacing: 2rpx;
   border: none;
-  margin-top: 22rpx;
+  margin-top: 0;
+  width: 100%;
+  box-sizing: border-box;
   padding: 0 28rpx;
   overflow: hidden;
   box-shadow:
@@ -503,6 +505,133 @@ button::after {
 .anim-delay-3 { animation-delay: 0.18s; }
 .anim-delay-4 { animation-delay: 0.24s; }
 
+
+
+/* ========== Tool action layout (non-weight shared) ========== */
+.card-actions {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 22rpx;
+  align-items: stretch;
+}
+
+.card-actions .btn-primary,
+.card-actions .btn-ghost {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  margin: 0 !important;
+  height: 84rpx !important;
+  line-height: 84rpx !important;
+  font-size: 28rpx !important;
+  letter-spacing: 1rpx !important;
+  border-radius: 14rpx !important;
+  padding: 0 12rpx !important;
+  box-sizing: border-box;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: visible !important;
+}
+
+.card-actions.single .btn-primary {
+  height: 92rpx !important;
+  line-height: 92rpx !important;
+  font-size: 30rpx !important;
+}
+
+.card-actions.single .btn-primary,
+.card-actions.single .btn-ghost {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.result-actions {
+  margin-top: 20rpx;
+}
+
+.result-actions .btn-primary,
+.result-actions .btn-ghost {
+  width: 100%;
+  margin: 0 !important;
+}
+
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+  margin-top: 18rpx;
+}
+
+.action-stack .btn-primary,
+.action-stack .btn-ghost {
+  width: 100%;
+  margin: 0 !important;
+}
+
+.btn-block {
+  width: 100% !important;
+  margin-top: 0 !important;
+}
+
+.btn-row {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 18rpx;
+  align-items: stretch;
+}
+
+.btn-row .btn-primary,
+.btn-row .btn-ghost,
+.btn-row .flex-1 {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  margin: 0 !important;
+  height: 84rpx !important;
+  line-height: 84rpx !important;
+  font-size: 28rpx !important;
+  border-radius: 14rpx !important;
+  box-sizing: border-box;
+}
+
+.tool-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  height: 92rpx;
+  border-radius: 18rpx;
+  font-size: 30rpx;
+  font-weight: 720;
+  letter-spacing: 1rpx;
+  box-sizing: border-box;
+}
+
+.tool-cta.primary {
+  color: #07101c;
+  background: linear-gradient(180deg, #f7fbff 0%, #d9e8ff 48%, #c8dcff 100%);
+  box-shadow:
+    0 0 0 1rpx rgba(92, 225, 255, 0.28),
+    0 10rpx 28rpx rgba(92, 225, 255, 0.18);
+}
+
+.tool-cta.primary:active {
+  transform: scale(0.985);
+  opacity: 0.94;
+}
+
+.theme-light .tool-cta.primary {
+  color: #ffffff;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 52%, #1d4ed8 100%);
+  box-shadow: 0 10rpx 24rpx rgba(37, 99, 235, 0.28);
+}
+
+.theme-light .tool-cta.primary[disabled],
+.tool-cta.primary[disabled] {
+  opacity: 0.55;
+}
+
 /* =========================================================
  * Clean Lab · 纯白极简（独立视觉体系）
  * 不是深空换色：去掉 HUD 角标/赛博描边/霓虹光，改用纸感卡片与柔和阴影
@@ -734,6 +863,11 @@ page.theme-light .flex-btn.calc {
   background: linear-gradient(180deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%) !important;
 }
 .btn-primary-hover {
+  opacity: 0.92;
+  transform: scale(0.985);
+}
+
+.btn-ghost-hover {
   opacity: 0.92;
   transform: scale(0.985);
 }

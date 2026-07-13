@@ -31,10 +31,10 @@
       >{{item.label}}</view>
     </view>
 
-    <view class="row-btns">
-      <button class="btn-ghost flex-btn" bindtap="onBack" disabled="{{!path.length}}">回退</button>
-      <button class="btn-ghost flex-btn" bindtap="onReset">清空</button>
-      <button class="btn-primary flex-btn calc" bindtap="onQuery" disabled="{{!path.length}}">查询称呼</button>
+    <view class="card-actions">
+      <button class="btn-ghost" bindtap="onBack" disabled="{{!path.length}}">回退</button>
+      <button class="btn-ghost" bindtap="onReset">清空</button>
+      <button class="btn-primary" bindtap="onQuery" disabled="{{!path.length}}">查询称呼</button>
     </view>
   </view>
 

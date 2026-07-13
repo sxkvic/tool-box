@@ -1,3 +1,81 @@
+/* password page · custom rules */
+.rules-card .section-label {
+  margin-top: 22rpx;
+  margin-bottom: 14rpx;
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  letter-spacing: 1rpx;
+}
+
+.rules-card .section-label:first-of-type {
+  margin-top: 4rpx;
+}
+
+.preset-row {
+  margin-bottom: 4rpx;
+}
+
+.len-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.len-chip {
+  min-width: 88rpx;
+  height: 64rpx;
+  padding: 0 18rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
+}
+
+.len-chip.on {
+  color: var(--accent);
+  background: rgba(92, 225, 255, 0.12);
+  border-color: rgba(92, 225, 255, 0.45);
+  box-shadow: 0 0 16rpx rgba(92, 225, 255, 0.12);
+}
+
+.len-custom {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.len-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.len-btn:active {
+  opacity: 0.82;
+  transform: scale(0.96);
+}
+
+.len-slider {
+  flex: 1;
+  margin: 0 4rpx;
+}
+
 .opt-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -37,12 +115,123 @@
   color: var(--accent);
 }
 
+.switch-row {
+  margin-top: 18rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+}
+
+.switch-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  min-width: 0;
+}
+
+.switch-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.switch-desc {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+}
+
+.switch-ui {
+  width: 76rpx;
+  height: 42rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.switch-knob {
+  position: absolute;
+  top: 3rpx;
+  left: 3rpx;
+  width: 34rpx;
+  height: 34rpx;
+  border-radius: 50%;
+  background: #e5e7eb;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.25);
+  transition: all 0.18s ease;
+}
+
+.switch-ui.on {
+  background: rgba(92, 225, 255, 0.28);
+  border-color: rgba(92, 225, 255, 0.5);
+}
+
+.switch-ui.on .switch-knob {
+  left: 37rpx;
+  background: #5ce1ff;
+}
+
+.rules-tip {
+  margin-top: 18rpx;
+  margin-bottom: 0;
+}
+
+/* view 版按钮：彻底避开微信 button 默认字体色/裁切问题 */
+.action-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center;
+  box-sizing: border-box;
+  overflow: visible !important;
+  white-space: nowrap;
+  font-weight: 700 !important;
+}
+
+.rules-card .action-btn.btn-primary,
+.result-box .action-btn.btn-primary {
+  color: #061018 !important;
+  background: linear-gradient(180deg, #f8fcff 0%, #dce9ff 50%, #c5dbff 100%) !important;
+  border: 1rpx solid rgba(160, 200, 255, 0.7) !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.result-box .action-btn.btn-ghost {
+  color: #eef6ff !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) !important;
+  border: 1rpx solid rgba(92, 225, 255, 0.35) !important;
+}
+
+.action-btn.is-disabled {
+  pointer-events: none;
+  opacity: 0.72 !important;
+  color: #5b6478 !important;
+  background: linear-gradient(180deg, rgba(40, 48, 68, 0.95), rgba(24, 30, 46, 0.95)) !important;
+  border: 1rpx solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
+.result-box > view,
+.result-box > text {
+  position: relative;
+  z-index: 2;
+}
+
 .pwd-line {
   font-size: 34rpx;
   font-weight: 700;
   word-break: break-all;
   line-height: 1.45;
   letter-spacing: 1rpx;
+  color: #f4fbff;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   text-shadow: 0 0 20rpx rgba(92, 225, 255, 0.2);
 }
@@ -113,6 +302,22 @@
   flex-shrink: 0;
 }
 
+.theme-light .len-chip {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+.theme-light .len-chip.on {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #2563eb;
+  box-shadow: none;
+}
+.theme-light .len-btn {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #0f172a;
+}
 .theme-light .opt {
   background: #ffffff;
   border-color: #e2e8f0;
@@ -123,9 +328,24 @@
   box-shadow: none;
 }
 .theme-light .opt.on .opt-k { color: #2563eb; }
+.theme-light .switch-row {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+.theme-light .switch-ui {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+.theme-light .switch-ui.on {
+  background: #bfdbfe;
+  border-color: #93c5fd;
+}
+.theme-light .switch-ui.on .switch-knob {
+  background: #2563eb;
+}
 .theme-light .pwd-line {
   text-shadow: none;
-  color: #0f172a;
+  color: #0f172a !important;
 }
 .theme-light .str-bar {
   background: #e2e8f0;
@@ -137,3 +357,24 @@
 .theme-light .hist { border-bottom-color: #eef2f7; }
 .theme-light .hist-pwd { color: #64748b; }
 .theme-light .hist-copy { color: #2563eb; }
+
+.theme-light .rules-card .action-btn.btn-primary,
+.theme-light .result-box .action-btn.btn-primary {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 52%, #1d4ed8 100%) !important;
+  border: none !important;
+  box-shadow: 0 10rpx 24rpx rgba(37, 99, 235, 0.28) !important;
+}
+
+.theme-light .result-box .action-btn.btn-ghost {
+  color: #1e293b !important;
+  background: #ffffff !important;
+  border: 1rpx solid #e2e8f0 !important;
+}
+
+.theme-light .action-btn.is-disabled {
+  color: #94a3b8 !important;
+  background: #e2e8f0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}

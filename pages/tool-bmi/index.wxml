@@ -4,14 +4,12 @@
   <view class="card">
     <view class="card-title">身高 (cm)</view>
     <input class="input" type="digit" placeholder="例如 170" value="{{height}}" bindinput="onHeight" />
-  </view>
-
-  <view class="card">
-    <view class="card-title">体重 (kg)</view>
+    <view class="card-title" style="margin-top: 22rpx;">体重 (kg)</view>
     <input class="input" type="digit" placeholder="例如 65" value="{{weight}}" bindinput="onWeight" />
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onCalc">计算 BMI</button>
+    </view>
   </view>
-
-  <button class="btn-primary" bindtap="onCalc">计算 BMI</button>
 
   <view class="result-box" wx:if="{{bmi}}">
     <view class="result-label">BMI 结果</view>

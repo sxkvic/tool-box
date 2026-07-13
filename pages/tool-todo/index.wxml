@@ -6,7 +6,9 @@
     <view class="row">
       <input class="input flex-1" placeholder="例如：晚上健身 30 分钟" value="{{text}}" bindinput="onText" confirm-type="done" bindconfirm="onAdd" />
     </view>
-    <button class="btn-primary" bindtap="onAdd">添加</button>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onAdd">添加待办</button>
+    </view>
   </view>
 
   <view class="card">
@@ -30,7 +32,9 @@
     </block>
     <view class="section-tip" wx:else style="margin: 12rpx 0 0;">这一页还是空的</view>
 
-    <button class="btn-ghost" style="margin-top: 18rpx; width: 100%;" bindtap="onClearDone" wx:if="{{items.length}}">清理已完成</button>
+    <view class="card-actions single" wx:if="{{items.length}}">
+      <button class="btn-ghost" bindtap="onClearDone">清理已完成</button>
+    </view>
   </view>
 
   <view class="ad-slot"><ad-banner /></view>

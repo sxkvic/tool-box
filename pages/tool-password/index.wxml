@@ -1,15 +1,48 @@
 <view class="container theme-{{theme}}">
   <quota-bar id="quotaBar" />
 
-  <view class="card">
-    <view class="card-title">长度</view>
-    <picker mode="selector" range="{{lengthOptions}}" value="{{lengthIndex}}" bindchange="onLengthChange">
-      <view class="picker-value">{{length}} 位 ▾</view>
-    </picker>
-  </view>
+  <view class="card rules-card">
+    <view class="card-title">自定义规则</view>
 
-  <view class="card">
-    <view class="card-title">字符集</view>
+    <view class="section-label">快捷预设</view>
+    <view class="tag-row preset-row">
+      <view
+        class="tag {{preset === item.key ? 'active' : ''}}"
+        wx:for="{{presets}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onPreset"
+      >{{item.name}}</view>
+    </view>
+
+    <view class="section-label">密码长度 · {{length}} 位</view>
+    <view class="len-chips">
+      <view
+        class="len-chip {{length === item ? 'on' : ''}}"
+        wx:for="{{lengthOptions}}"
+        wx:key="*this"
+        data-len="{{item}}"
+        bindtap="onLengthTap"
+      >{{item}}</view>
+    </view>
+    <view class="len-custom">
+      <view class="len-btn" data-delta="-1" bindtap="onLengthStep">-</view>
+      <slider
+        class="len-slider"
+        min="4"
+        max="64"
+        step="1"
+        value="{{length}}"
+        activeColor="{{theme === 'light' ? '#2563eb' : '#5ce1ff'}}"
+        backgroundColor="{{theme === 'light' ? '#e2e8f0' : 'rgba(255,255,255,0.12)'}}"
+        block-size="18"
+        bindchange="onLengthSlider"
+        bindchanging="onLengthSliding"
+      />
+      <view class="len-btn" data-delta="1" bindtap="onLengthStep">+</view>
+    </view>
+
+    <view class="section-label">字符类型</view>
     <view class="opt-grid">
       <view class="opt {{lower ? 'on' : ''}}" data-key="lower" bindtap="onToggle">
         <text class="opt-k">a-z</text>
@@ -28,16 +61,26 @@
         <text class="opt-v">符号</text>
       </view>
     </view>
-    <view class="section-tip" style="margin-top: 16rpx;">仅在本机生成，不上传服务器</view>
-  </view>
 
-  <button
-    class="btn-primary"
-    type="default"
-    hover-class="btn-primary-hover"
-    disabled="{{generating}}"
-    bindtap="onGenerate"
-  >{{generating ? '生成中…' : '生成密码'}}</button>
+    <view class="switch-row" bindtap="onToggleExclude">
+      <view class="switch-meta">
+        <text class="switch-title">排除易混字符</text>
+        <text class="switch-desc">过滤 0 / O / I / l / 1 等</text>
+      </view>
+      <view class="switch-ui {{excludeAmbiguous ? 'on' : ''}}">
+        <view class="switch-knob"></view>
+      </view>
+    </view>
+
+    <view class="section-tip rules-tip">仅在本机生成，不上传服务器 · 支持 4-64 位自定义</view>
+    <view class="card-actions single">
+      <view
+        class="btn-primary action-btn {{generating ? 'is-disabled' : ''}}"
+        hover-class="btn-primary-hover"
+        bindtap="onGenerate"
+      >{{generating ? '生成中...' : '生成密码'}}</view>
+    </view>
+  </view>
 
   <view class="result-box" wx:if="{{password}}">
     <view class="result-label">生成结果</view>
@@ -52,7 +95,14 @@
       </view>
       <text class="str-text" style="color: {{strengthColor}};">{{strengthLabel}}</text>
     </view>
-    <button class="btn-ghost" type="default" style="margin-top: 20rpx; width: 100%;" bindtap="onCopy">复制密码</button>
+    <view class="card-actions">
+      <view class="btn-ghost action-btn" hover-class="btn-ghost-hover" bindtap="onCopy">复制密码</view>
+      <view
+        class="btn-primary action-btn {{generating ? 'is-disabled' : ''}}"
+        hover-class="btn-primary-hover"
+        bindtap="onGenerate"
+      >{{generating ? '生成中...' : '重新生成'}}</view>
+    </view>
   </view>
 
   <view class="card" wx:if="{{history.length}}">

@@ -19,6 +19,9 @@
       bindinput="onList"
       maxlength="-1"
     />
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onDraw">开始抽取</button>
+    </view>
   </view>
 
   <view class="card" wx:if="{{mode === 'number'}}">
@@ -28,19 +31,25 @@
       <text class="sep">~</text>
       <input class="input flex-1" type="number" placeholder="最大" value="{{maxNum}}" bindinput="onMax" />
     </view>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onDraw">开始抽取</button>
+    </view>
   </view>
 
   <view class="card dice-card" wx:if="{{mode === 'dice'}}">
     <view class="dice-face"><tool-icon name="dice" size="{{88}}"></tool-icon></view>
-    <view class="section-tip" style="margin: 0; text-align: center;">模拟标准 6 面骰子</view>
+    <view class="section-tip" style="margin: 0 0 8rpx; text-align: center;">模拟标准 6 面骰子</view>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onDraw">掷一次</button>
+    </view>
   </view>
-
-  <button class="btn-primary" bindtap="onDraw">开始抽取</button>
 
   <view class="result-box" wx:if="{{result !== ''}}">
     <view class="result-label">抽中了</view>
     <view class="result-value big">{{result}}</view>
-    <button class="btn-ghost" style="margin-top: 12rpx;" bindtap="onDraw">再抽一次</button>
+    <view class="result-actions">
+      <button class="btn-ghost" bindtap="onDraw">再抽一次</button>
+    </view>
   </view>
 
   <view class="ad-slot"><ad-banner /></view>

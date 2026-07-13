@@ -18,10 +18,11 @@
     <view class="card">
       <view class="card-title">原价（元）</view>
       <input class="input" type="digit" placeholder="例如 199" value="{{price}}" data-key="price" bindinput="onField" />
-    </view>
-    <view class="card">
-      <view class="card-title">折扣（如 8.5 折）</view>
+      <view class="card-title" style="margin-top: 22rpx;">折扣（如 8.5 折）</view>
       <input class="input" type="digit" placeholder="8.5 或 0.85" value="{{rate}}" data-key="rate" bindinput="onField" />
+      <view class="card-actions single">
+        <button class="btn-primary" bindtap="onCalc">开始计算</button>
+      </view>
     </view>
   </block>
 
@@ -29,14 +30,13 @@
     <view class="card">
       <view class="card-title">订单金额（元）</view>
       <input class="input" type="digit" placeholder="例如 268" value="{{price}}" data-key="price" bindinput="onField" />
-    </view>
-    <view class="card">
-      <view class="card-title">每满（元）</view>
+      <view class="card-title" style="margin-top: 22rpx;">每满（元）</view>
       <input class="input" type="digit" placeholder="100" value="{{full}}" data-key="full" bindinput="onField" />
-    </view>
-    <view class="card">
-      <view class="card-title">减免（元）</view>
+      <view class="card-title" style="margin-top: 22rpx;">减免（元）</view>
       <input class="input" type="digit" placeholder="20" value="{{minus}}" data-key="minus" bindinput="onField" />
+      <view class="card-actions single">
+        <button class="btn-primary" bindtap="onCalc">开始计算</button>
+      </view>
     </view>
   </block>
 
@@ -44,14 +44,13 @@
     <view class="card">
       <view class="card-title">基数</view>
       <input class="input" type="digit" placeholder="例如 200" value="{{base}}" data-key="base" bindinput="onField" />
-    </view>
-    <view class="card">
-      <view class="card-title">百分比（%）</view>
+      <view class="card-title" style="margin-top: 22rpx;">百分比（%）</view>
       <input class="input" type="digit" placeholder="例如 10" value="{{percent}}" data-key="percent" bindinput="onField" />
+      <view class="card-actions single">
+        <button class="btn-primary" bindtap="onCalc">开始计算</button>
+      </view>
     </view>
   </block>
-
-  <button class="btn-primary" bindtap="onCalc">开始计算</button>
 
   <view class="result-box" wx:if="{{result}}">
     <view class="result-label">计算结果</view>
@@ -62,7 +61,9 @@
         <text class="v">{{item.value}}</text>
       </view>
     </view>
-    <button class="btn-ghost" style="margin-top: 20rpx; width: 100%;" bindtap="onCopy">复制结果</button>
+    <view class="result-actions">
+      <button class="btn-ghost" bindtap="onCopy">复制结果</button>
+    </view>
   </view>
 
   <view class="ad-slot"><ad-banner /></view>

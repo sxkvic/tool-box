@@ -9,55 +9,7 @@ const LOWER = 'abcdefghijklmnopqrstuvwxyz'
 const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const DIGIT = '0123456789'
 const SYMBOL = '!@#$%^&*()-_=+[]{}|;:,.<>?/~`'
-const AMBIGUOUS = '0OIl1'
 const STORE_KEY = 'password_state_v1'
-
-const PRESETS = {
-  simple: { length: 8, lower: true, upper: false, digit: true, symbol: false, excludeAmbiguous: true },
-  common: { length: 16, lower: true, upper: true, digit: true, symbol: false, excludeAmbiguous: true },
-  strong: { length: 20, lower: true, upper: true, digit: true, symbol: true, excludeAmbiguous: false },
-  digits: { length: 6, lower: false, upper: false, digit: true, symbol: false, excludeAmbiguous: false }
-}
-
-const PRESET_LIST = [
-  { key: 'simple', name: '简单' },
-  { key: 'common', name: '常用' },
-  { key: 'strong', name: '强密码' },
-  { key: 'digits', name: '仅数字' }
-]
-
-function stripAmbiguous(set) {
-  if (!set) return ''
-  let out = ''
-  for (let i = 0; i < set.length; i++) {
-    const ch = set.charAt(i)
-    if (AMBIGUOUS.indexOf(ch) < 0) out += ch
-  }
-  return out
-}
-
-function charsetPart(base, excludeAmbiguous) {
-  return excludeAmbiguous ? stripAmbiguous(base) : base
-}
-
-function matchPreset(state) {
-  const keys = Object.keys(PRESETS)
-  for (let i = 0; i < keys.length; i++) {
-    const k = keys[i]
-    const pset = PRESETS[k]
-    if (
-      Number(state.length) === pset.length &&
-      !!state.lower === !!pset.lower &&
-      !!state.upper === !!pset.upper &&
-      !!state.digit === !!pset.digit &&
-      !!state.symbol === !!pset.symbol &&
-      !!state.excludeAmbiguous === !!pset.excludeAmbiguous
-    ) {
-      return k
-    }
-  }
-  return 'custom'
-}
 
 /**
  * 密码随机源
@@ -329,12 +281,11 @@ function shuffleInPlace(arr) {
 }
 
 function buildCharset(opts) {
-  const exclude = !!opts.excludeAmbiguous
   let set = ''
-  if (opts.lower) set += charsetPart(LOWER, exclude)
-  if (opts.upper) set += charsetPart(UPPER, exclude)
-  if (opts.digit) set += charsetPart(DIGIT, exclude)
-  if (opts.symbol) set += charsetPart(SYMBOL, exclude)
+  if (opts.lower) set += LOWER
+  if (opts.upper) set += UPPER
+  if (opts.digit) set += DIGIT
+  if (opts.symbol) set += SYMBOL
   return set
 }
 
@@ -397,15 +348,10 @@ function generatePassword(opts, len) {
   let attempt = 0
   do {
     const required = []
-    const exclude = !!opts.excludeAmbiguous
-    const lowerSet = charsetPart(LOWER, exclude)
-    const upperSet = charsetPart(UPPER, exclude)
-    const digitSet = charsetPart(DIGIT, exclude)
-    const symbolSet = charsetPart(SYMBOL, exclude)
-    if (opts.lower && lowerSet) required.push(pick(lowerSet))
-    if (opts.upper && upperSet) required.push(pick(upperSet))
-    if (opts.digit && digitSet) required.push(pick(digitSet))
-    if (opts.symbol && symbolSet) required.push(pick(symbolSet))
+    if (opts.lower) required.push(pick(LOWER))
+    if (opts.upper) required.push(pick(UPPER))
+    if (opts.digit) required.push(pick(DIGIT))
+    if (opts.symbol) required.push(pick(SYMBOL))
 
     const chars = required.slice()
     while (chars.length < len) chars.push(pick(set))
@@ -432,14 +378,12 @@ Page({
   data: {
     theme: readInitialTheme(),
     length: 16,
+    lengthIndex: 2,
     lengthOptions: [8, 12, 16, 20, 24, 32],
     lower: true,
     upper: true,
     digit: true,
     symbol: true,
-    excludeAmbiguous: false,
-    preset: 'custom',
-    presets: PRESET_LIST,
     password: '',
     strengthLabel: '',
     strengthColor: '',
@@ -490,28 +434,20 @@ Page({
 
   restore() {
     const s = storage.get(STORE_KEY, null)
-    if (!s || typeof s !== 'object') {
-      this.setData({ preset: matchPreset(this.data) })
-      return
-    }
-    let length = clamp(Number(s.length) || 16, 4, 64)
-    const next = {
+    if (!s || typeof s !== 'object') return
+    const lengthOptions = this.data.lengthOptions
+    let length = Number(s.length) || 16
+    if (lengthOptions.indexOf(length) < 0) length = 16
+    const lengthIndex = Math.max(0, lengthOptions.indexOf(length))
+    this.setData({
       length,
+      lengthIndex,
       lower: s.lower !== false,
       upper: s.upper !== false,
       digit: s.digit !== false,
       symbol: s.symbol !== false,
-      excludeAmbiguous: !!s.excludeAmbiguous,
       history: Array.isArray(s.history) ? s.history.slice(0, 8) : []
-    }
-    if (!next.lower && !next.upper && !next.digit && !next.symbol) {
-      next.lower = true
-      next.upper = true
-      next.digit = true
-      next.symbol = true
-    }
-    next.preset = matchPreset(next)
-    this.setData(next)
+    })
   },
 
   persist(patch) {
@@ -522,7 +458,6 @@ Page({
         upper: this.data.upper,
         digit: this.data.digit,
         symbol: this.data.symbol,
-        excludeAmbiguous: this.data.excludeAmbiguous,
         history: this.data.history
       },
       patch || {}
@@ -530,110 +465,30 @@ Page({
     storage.set(STORE_KEY, next)
   },
 
-  setLength(len, persistNow) {
-    const length = clamp(Number(len) || 16, 4, 64)
-    if (length === this.data.length) return
-    const preset = matchPreset({
-      length,
-      lower: this.data.lower,
-      upper: this.data.upper,
-      digit: this.data.digit,
-      symbol: this.data.symbol,
-      excludeAmbiguous: this.data.excludeAmbiguous
-    })
-    this.setData({ length, preset })
-    if (persistNow !== false) this.persist({ length })
-  },
-
-  onLengthTap(e) {
-    const len = Number(e.currentTarget.dataset.len)
-    if (!len) return
-    this.setLength(len, true)
-  },
-
-  onLengthStep(e) {
-    const delta = Number(e.currentTarget.dataset.delta) || 0
-    this.setLength((this.data.length || 16) + delta, true)
-  },
-
-  onLengthSliding(e) {
-    const length = clamp(Number(e.detail.value) || 16, 4, 64)
-    if (length === this.data.length) return
-    this.setData({
-      length,
-      preset: matchPreset({
-        length,
-        lower: this.data.lower,
-        upper: this.data.upper,
-        digit: this.data.digit,
-        symbol: this.data.symbol,
-        excludeAmbiguous: this.data.excludeAmbiguous
-      })
-    })
-  },
-
-  onLengthSlider(e) {
-    this.setLength(e.detail.value, true)
-  },
-
-  onPreset(e) {
-    const key = e.currentTarget.dataset.key
-    const conf = PRESETS[key]
-    if (!conf) return
-    const next = {
-      preset: key,
-      length: conf.length,
-      lower: conf.lower,
-      upper: conf.upper,
-      digit: conf.digit,
-      symbol: conf.symbol,
-      excludeAmbiguous: conf.excludeAmbiguous
-    }
-    this.setData(next)
-    this.persist({
-      length: next.length,
-      lower: next.lower,
-      upper: next.upper,
-      digit: next.digit,
-      symbol: next.symbol,
-      excludeAmbiguous: next.excludeAmbiguous
-    })
+  onLengthChange(e) {
+    const lengthIndex = Number(e.detail.value)
+    const length = this.data.lengthOptions[lengthIndex]
+    this.setData({ lengthIndex, length })
+    this.persist({ length })
   },
 
   onToggle(e) {
     const key = e.currentTarget.dataset.key
     if (!key) return
-    const nextVal = !this.data[key]
+    const next = !this.data[key]
     const state = {
-      length: this.data.length,
       lower: this.data.lower,
       upper: this.data.upper,
       digit: this.data.digit,
-      symbol: this.data.symbol,
-      excludeAmbiguous: this.data.excludeAmbiguous
+      symbol: this.data.symbol
     }
-    state[key] = nextVal
+    state[key] = next
     if (!state.lower && !state.upper && !state.digit && !state.symbol) {
       wx.showToast({ title: '至少开启一种字符', icon: 'none' })
       return
     }
-    state.preset = matchPreset(state)
-    this.setData({ [key]: nextVal, preset: state.preset })
-    this.persist({ [key]: nextVal })
-  },
-
-  onToggleExclude() {
-    const excludeAmbiguous = !this.data.excludeAmbiguous
-    const preset = matchPreset({
-      length: this.data.length,
-      lower: this.data.lower,
-      upper: this.data.upper,
-      digit: this.data.digit,
-      symbol: this.data.symbol,
-      excludeAmbiguous
-    })
-    this.setData({ excludeAmbiguous, preset })
-    this.persist({ excludeAmbiguous })
+    this.setData({ [key]: next })
+    this.persist({ [key]: next })
   },
 
   refreshQuota() {
@@ -648,8 +503,7 @@ Page({
       lower: this.data.lower,
       upper: this.data.upper,
       digit: this.data.digit,
-      symbol: this.data.symbol,
-      excludeAmbiguous: this.data.excludeAmbiguous
+      symbol: this.data.symbol
     }
     if (!buildCharset(opts)) {
       wx.showToast({ title: '请选择字符类型', icon: 'none' })

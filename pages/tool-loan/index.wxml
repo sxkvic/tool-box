@@ -17,20 +17,15 @@
   <view class="card">
     <view class="card-title">贷款金额（万元）</view>
     <input class="input" type="digit" placeholder="例如 100" value="{{amount}}" bindinput="onAmount" />
-  </view>
-
-  <view class="card">
-    <view class="card-title">贷款年限（年）</view>
+    <view class="card-title" style="margin-top: 22rpx;">贷款年限（年）</view>
     <input class="input" type="number" placeholder="例如 30" value="{{years}}" bindinput="onYears" />
-  </view>
-
-  <view class="card">
-    <view class="card-title">年利率（%）</view>
+    <view class="card-title" style="margin-top: 22rpx;">年利率（%）</view>
     <input class="input" type="digit" placeholder="例如 3.6" value="{{rate}}" bindinput="onRate" />
     <view class="section-tip" style="margin-top: 12rpx;">结果仅供估算参考，以银行实际放款为准</view>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="onCalc">开始计算</button>
+    </view>
   </view>
-
-  <button class="btn-primary" bindtap="onCalc">开始计算</button>
 
   <view class="result-box" wx:if="{{result}}">
     <view class="result-label">{{result.methodName}}</view>
@@ -41,7 +36,9 @@
         <text class="loan-v">{{item.value}}</text>
       </view>
     </view>
-    <button class="btn-ghost" style="margin-top: 20rpx; width: 100%;" bindtap="onCopy">复制结果</button>
+    <view class="result-actions">
+      <button class="btn-ghost" bindtap="onCopy">复制结果</button>
+    </view>
   </view>
 
   <view class="ad-slot"><ad-banner /></view>

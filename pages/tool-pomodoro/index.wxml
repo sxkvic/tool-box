@@ -1,41 +1,73 @@
 <view class="container theme-{{theme}}">
   <quota-bar free="{{true}}" />
 
+  <view class="card timer-card">
+    <view class="phase-chip phase-{{phase}}">{{phaseText}}</view>
+
+    <view class="ring-wrap">
+      <view class="ring-glow phase-{{phase}}"></view>
+      <view class="ring-face">
+        <view class="timer-text">{{timeText}}</view>
+        <view class="timer-sub">{{running ? '进行中' : (remainSec === totalSec ? '准备开始' : '已暂停')}}</view>
+      </view>
+    </view>
+
+    <view class="progress-track">
+      <view class="progress-fill phase-{{phase}}" style="width: {{progress}}%;"></view>
+    </view>
+
+    <view class="meta-row">
+      <view class="meta-item">
+        <text class="meta-num">{{doneRounds}}</text>
+        <text class="meta-label">已完成</text>
+      </view>
+      <view class="meta-divider"></view>
+      <view class="meta-item">
+        <text class="meta-num">{{workMin}}</text>
+        <text class="meta-label">专注分</text>
+      </view>
+      <view class="meta-divider"></view>
+      <view class="meta-item">
+        <text class="meta-num">{{restMin}}</text>
+        <text class="meta-label">休息分</text>
+      </view>
+    </view>
+
+    <view class="action-row">
+      <view
+        class="action-btn primary {{running ? '' : ''}}"
+        hover-class="action-btn-hover"
+        bindtap="onToggleRun"
+      >{{running ? '暂停' : (remainSec === totalSec ? '开始' : '继续')}}</view>
+      <view class="action-btn ghost" hover-class="action-btn-hover" bindtap="onReset">重置</view>
+    </view>
+
+    <view
+      class="skip-btn {{running ? 'disabled' : ''}}"
+      hover-class="{{running ? '' : 'skip-btn-hover'}}"
+      bindtap="skipPhase"
+    >跳过本阶段</view>
+  </view>
+
   <view class="card">
     <view class="card-title">预设节奏</view>
-    <view class="tag-row">
+    <view class="preset-grid">
       <view
-        class="tag {{preset === item.key ? 'active' : ''}}"
+        class="preset-item {{preset === item.key ? 'on' : ''}} {{running ? 'locked' : ''}}"
         wx:for="{{presets}}"
         wx:key="key"
         data-key="{{item.key}}"
         bindtap="onPreset"
-      >{{item.name}} {{item.work}}/{{item.rest}}</view>
+      >
+        <text class="preset-name">{{item.name}}</text>
+        <text class="preset-time">{{item.work}} / {{item.rest}}</text>
+      </view>
     </view>
   </view>
-
-  <view class="card timer-card">
-    <view class="phase-chip phase-{{phase}}">{{phaseText}}</view>
-    <view class="timer-text">{{timeText}}</view>
-    <view class="progress-track">
-      <view class="progress-fill" style="width: {{progress}}%;"></view>
-    </view>
-    <view class="meta-row">
-      <text>已完成 {{doneRounds}} 个番茄</text>
-      <text>{{workMin}} 分专注 · {{restMin}} 分休息</text>
-    </view>
-  </view>
-
-  <view class="btn-row">
-    <button class="btn-primary flex-1" wx:if="{{!running}}" bindtap="onStart">{{remainSec === totalSec ? '开始' : '继续'}}</button>
-    <button class="btn-primary flex-1" wx:else bindtap="onPause">暂停</button>
-    <button class="btn-ghost flex-1" bindtap="onReset">重置</button>
-  </view>
-  <button class="btn-ghost" style="margin-top: 16rpx; width: 100%;" bindtap="skipPhase" wx:if="{{!running}}">跳过本阶段</button>
 
   <view class="card tip-card">
     <view class="card-title">使用提示</view>
-    <view class="section-tip" style="margin: 0;">保持屏幕常亮可避免后台节流；本工具纯本地计时，不消耗每日次数。</view>
+    <view class="tip-text">保持屏幕常亮可避免后台节流。本工具纯本地计时，不消耗每日次数。</view>
   </view>
 
   <view class="ad-slot"><ad-banner /></view>

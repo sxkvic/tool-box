@@ -14,32 +14,40 @@
         <view class="ts-val">{{nowMs}}</view>
       </view>
     </view>
-    <view class="row-btns">
-      <button class="btn-ghost flex-btn" bindtap="copySec">复制秒级</button>
-      <button class="btn-ghost flex-btn" bindtap="copyMs">复制毫秒</button>
-      <button class="btn-ghost flex-btn" bindtap="refreshNow">刷新</button>
+    <view class="card-actions">
+      <button class="btn-ghost" bindtap="copySec">复制秒级</button>
+      <button class="btn-ghost" bindtap="copyMs">复制毫秒</button>
+      <button class="btn-ghost" bindtap="refreshNow">刷新</button>
     </view>
   </view>
 
   <view class="card">
     <view class="card-title">时间戳 → 日期</view>
     <input class="input" type="number" placeholder="输入秒或毫秒时间戳" value="{{tsInput}}" bindinput="onTsInput" />
-    <button class="btn-primary" bindtap="tsToDate">转换</button>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="tsToDate">转换</button>
+    </view>
     <view class="result-box compact" wx:if="{{dateOut}}">
       <view class="result-label">日期时间</view>
       <view class="result-value small">{{dateOut}}</view>
-      <button class="btn-ghost" style="margin-top: 16rpx;" bindtap="copyDateOut">复制</button>
+      <view class="result-actions">
+        <button class="btn-ghost" bindtap="copyDateOut">复制</button>
+      </view>
     </view>
   </view>
 
   <view class="card">
     <view class="card-title">日期 → 时间戳</view>
     <input class="input" placeholder="如 2026-07-12 12:00:00" value="{{dateInput}}" bindinput="onDateInput" />
-    <button class="btn-primary" bindtap="dateToTs">转换</button>
+    <view class="card-actions single">
+      <button class="btn-primary" bindtap="dateToTs">转换</button>
+    </view>
     <view class="result-box compact" wx:if="{{tsOut}}">
       <view class="result-label">秒 / 毫秒</view>
       <view class="result-value small">{{tsOutSec}} / {{tsOut}}</view>
-      <button class="btn-ghost" style="margin-top: 16rpx;" data-v="{{tsOutSec}}" bindtap="copyVal">复制秒级</button>
+      <view class="result-actions">
+        <button class="btn-ghost" data-v="{{tsOutSec}}" bindtap="copyVal">复制秒级</button>
+      </view>
     </view>
   </view>
 
