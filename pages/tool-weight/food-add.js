@@ -93,7 +93,7 @@ Page({
   refreshList() {
     const keyword = this.data.keyword
     const cat = this.data.cat
-    const list = foodDb.searchFoods(keyword, cat).slice(0, 80).map((f) => {
+    const list = foodDb.searchFoods(keyword, cat).map((f) => {
       const v = foodVisual.getVisual(f)
       return {
         id: f.id,

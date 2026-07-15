@@ -1,45 +1,18 @@
 /**
  * 本地食物营养库（每 100g）
- * 数据风格参考《中国食物成分表》及常见公开营养数据，用于估算，非实验室检测值。
+ * 数据风格参考《中国食物成分表》及常见公开营养数据，用于估算，非实验室检测值。家常菜为均估（用油差异大）；酒类含酒精能量。
  * 字段：kcal 千卡, protein/fat/carb 克
  */
 const FOOD_CATS = [
-  {
-    "id": "all",
-    "name": "全部"
-  },
-  {
-    "id": "staple",
-    "name": "主食"
-  },
-  {
-    "id": "meat",
-    "name": "肉蛋"
-  },
-  {
-    "id": "dairy",
-    "name": "奶豆"
-  },
-  {
-    "id": "veg",
-    "name": "蔬菜"
-  },
-  {
-    "id": "fruit",
-    "name": "水果"
-  },
-  {
-    "id": "snack",
-    "name": "零食"
-  },
-  {
-    "id": "drink",
-    "name": "饮品调味"
-  },
-  {
-    "id": "dish",
-    "name": "常见菜"
-  }
+  { id: 'all', name: '全部' },
+  { id: 'dish', name: '家常菜' },
+  { id: 'staple', name: '主食' },
+  { id: 'meat', name: '肉蛋' },
+  { id: 'dairy', name: '奶豆' },
+  { id: 'veg', name: '蔬菜' },
+  { id: 'fruit', name: '水果' },
+  { id: 'snack', name: '零食' },
+  { id: 'drink', name: '饮品调味' }
 ]
 
 const FOODS = [
@@ -268,9 +241,9 @@ const FOODS = [
     "cat": "meat",
     "name": "鸡胸肉(熟)",
     "aliases": "鸡胸 鸡脯",
-    "kcal": 133,
-    "protein": 28,
-    "fat": 2,
+    "kcal": 165,
+    "protein": 31,
+    "fat": 3.6,
     "carb": 0,
     "portion": 100
   },
@@ -1279,7 +1252,7 @@ const FOODS = [
     "id": "dish_113",
     "cat": "dish",
     "name": "番茄炒蛋",
-    "aliases": "",
+    "aliases": "西红柿炒蛋 番茄蛋",
     "kcal": 110,
     "protein": 6.5,
     "fat": 7,
@@ -1290,7 +1263,7 @@ const FOODS = [
     "id": "dish_114",
     "cat": "dish",
     "name": "青椒肉丝",
-    "aliases": "",
+    "aliases": "青椒炒肉",
     "kcal": 145,
     "protein": 11,
     "fat": 9,
@@ -1301,7 +1274,7 @@ const FOODS = [
     "id": "dish_115",
     "cat": "dish",
     "name": "鱼香肉丝",
-    "aliases": "",
+    "aliases": "鱼香",
     "kcal": 160,
     "protein": 10,
     "fat": 10,
@@ -1312,7 +1285,7 @@ const FOODS = [
     "id": "dish_116",
     "cat": "dish",
     "name": "宫保鸡丁",
-    "aliases": "",
+    "aliases": "宫爆鸡丁",
     "kcal": 175,
     "protein": 14,
     "fat": 10,
@@ -1323,7 +1296,7 @@ const FOODS = [
     "id": "dish_117",
     "cat": "dish",
     "name": "红烧肉",
-    "aliases": "",
+    "aliases": "五花肉 红烧",
     "kcal": 350,
     "protein": 13,
     "fat": 30,
@@ -1345,7 +1318,7 @@ const FOODS = [
     "id": "dish_119",
     "cat": "dish",
     "name": "麻婆豆腐",
-    "aliases": "",
+    "aliases": "麻婆 豆腐",
     "kcal": 120,
     "protein": 8,
     "fat": 8,
@@ -1367,7 +1340,7 @@ const FOODS = [
     "id": "dish_121",
     "cat": "dish",
     "name": "凉拌黄瓜",
-    "aliases": "",
+    "aliases": "拍黄瓜",
     "kcal": 35,
     "protein": 1,
     "fat": 2,
@@ -1378,7 +1351,7 @@ const FOODS = [
     "id": "dish_122",
     "cat": "dish",
     "name": "酸辣土豆丝",
-    "aliases": "",
+    "aliases": "土豆丝",
     "kcal": 95,
     "protein": 1.5,
     "fat": 4,
@@ -1389,7 +1362,7 @@ const FOODS = [
     "id": "dish_123",
     "cat": "dish",
     "name": "蛋炒饭",
-    "aliases": "",
+    "aliases": "炒饭",
     "kcal": 186,
     "protein": 5.5,
     "fat": 6,
@@ -1494,8 +1467,239 @@ const FOODS = [
     "fat": 3.5,
     "carb": 22,
     "portion": 100
+  },
+  {
+    "id": "dish_133",
+    "cat": "dish",
+    "name": "回锅肉",
+    "aliases": "回锅",
+    "kcal": 280,
+    "protein": 14,
+    "fat": 23,
+    "carb": 4,
+    "portion": 150
+  },
+  {
+    "id": "dish_134",
+    "cat": "dish",
+    "name": "小炒肉",
+    "aliases": "农家小炒肉",
+    "kcal": 210,
+    "protein": 13,
+    "fat": 15,
+    "carb": 5,
+    "portion": 150
+  },
+  {
+    "id": "dish_135",
+    "cat": "dish",
+    "name": "土豆烧牛肉",
+    "aliases": "牛腩炖土豆 炖牛肉",
+    "kcal": 145,
+    "protein": 12,
+    "fat": 7,
+    "carb": 9,
+    "portion": 200
+  },
+  {
+    "id": "dish_136",
+    "cat": "dish",
+    "name": "可乐鸡翅",
+    "aliases": "鸡翅",
+    "kcal": 220,
+    "protein": 15,
+    "fat": 12,
+    "carb": 12,
+    "portion": 150
+  },
+  {
+    "id": "dish_137",
+    "cat": "dish",
+    "name": "红烧茄子",
+    "aliases": "鱼香茄子 烧茄子",
+    "kcal": 120,
+    "protein": 2,
+    "fat": 8,
+    "carb": 10,
+    "portion": 180
+  },
+  {
+    "id": "dish_138",
+    "cat": "dish",
+    "name": "地三鲜",
+    "aliases": "土豆茄子青椒",
+    "kcal": 135,
+    "protein": 2.5,
+    "fat": 9,
+    "carb": 12,
+    "portion": 180
+  },
+  {
+    "id": "dish_139",
+    "cat": "dish",
+    "name": "蒜苔炒肉",
+    "aliases": "蒜薹炒肉",
+    "kcal": 155,
+    "protein": 11,
+    "fat": 10,
+    "carb": 5,
+    "portion": 150
+  },
+  {
+    "id": "dish_140",
+    "cat": "dish",
+    "name": "西红柿鸡蛋汤",
+    "aliases": "番茄蛋汤 蛋花汤",
+    "kcal": 35,
+    "protein": 2.5,
+    "fat": 1.5,
+    "carb": 3,
+    "portion": 250
+  },
+  {
+    "id": "dish_141",
+    "cat": "dish",
+    "name": "紫菜蛋花汤",
+    "aliases": "紫菜汤",
+    "kcal": 25,
+    "protein": 2,
+    "fat": 1,
+    "carb": 2,
+    "portion": 250
+  },
+  {
+    "id": "dish_142",
+    "cat": "dish",
+    "name": "清炒时蔬",
+    "aliases": "素炒青菜 清炒菜心 炒青菜",
+    "kcal": 45,
+    "protein": 2,
+    "fat": 3,
+    "carb": 3,
+    "portion": 150
+  },
+  {
+    "id": "dish_143",
+    "cat": "dish",
+    "name": "蒸蛋羹",
+    "aliases": "水蒸蛋 炖蛋",
+    "kcal": 80,
+    "protein": 6.5,
+    "fat": 5.5,
+    "carb": 1.5,
+    "portion": 150
+  },
+  {
+    "id": "dish_144",
+    "cat": "dish",
+    "name": "水煮肉片",
+    "aliases": "水煮牛肉 水煮",
+    "kcal": 185,
+    "protein": 14,
+    "fat": 13,
+    "carb": 3,
+    "portion": 200
+  },
+  {
+    "id": "dish_145",
+    "cat": "dish",
+    "name": "京酱肉丝",
+    "aliases": "酱肉丝",
+    "kcal": 195,
+    "protein": 13,
+    "fat": 12,
+    "carb": 8,
+    "portion": 150
+  },
+  {
+    "id": "dish_146",
+    "cat": "dish",
+    "name": "酸菜鱼",
+    "aliases": "老坛酸菜鱼",
+    "kcal": 120,
+    "protein": 12,
+    "fat": 6,
+    "carb": 4,
+    "portion": 250
+  },
+  {
+    "id": "dish_147",
+    "cat": "dish",
+    "name": "糖醋排骨",
+    "aliases": "排骨",
+    "kcal": 260,
+    "protein": 14,
+    "fat": 16,
+    "carb": 14,
+    "portion": 150
+  },
+  {
+    "id": "dish_148",
+    "cat": "dish",
+    "name": "白切鸡",
+    "aliases": "白斩鸡",
+    "kcal": 165,
+    "protein": 18,
+    "fat": 10,
+    "carb": 1,
+    "portion": 150
+  },
+  {
+    "id": "dish_149",
+    "cat": "dish",
+    "name": "蚂蚁上树",
+    "aliases": "肉末粉丝",
+    "kcal": 150,
+    "protein": 6,
+    "fat": 7,
+    "carb": 16,
+    "portion": 150
+  },
+  {
+    "id": "dish_150",
+    "cat": "dish",
+    "name": "蚝油生菜",
+    "aliases": "蚝油菜心",
+    "kcal": 50,
+    "protein": 1.5,
+    "fat": 3.5,
+    "carb": 4,
+    "portion": 150
+  },
+  {
+    "id": "dish_151",
+    "cat": "dish",
+    "name": "干煸豆角",
+    "aliases": "干煸四季豆 豆角",
+    "kcal": 130,
+    "protein": 4,
+    "fat": 9,
+    "carb": 8,
+    "portion": 150
+  },
+  {
+    "id": "dish_152",
+    "cat": "dish",
+    "name": "木须肉",
+    "aliases": "木樨肉 鸡蛋炒肉",
+    "kcal": 160,
+    "protein": 12,
+    "fat": 11,
+    "carb": 4,
+    "portion": 150
   }
 ]
+
+const EXTRA_FOODS = require('./food-extra')
+
+// merge extra; base wins on same id
+const _seen = new Set(FOODS.map((f) => f.id))
+EXTRA_FOODS.forEach((f) => {
+  if (f && f.id && !_seen.has(f.id)) {
+    FOODS.push(f)
+    _seen.add(f.id)
+  }
+})
 
 const FOOD_MAP = FOODS.reduce((m, f) => {
   m[f.id] = f
@@ -1506,7 +1710,15 @@ function searchFoods(keyword, cat) {
   const kw = (keyword || '').trim().toLowerCase()
   let list = FOODS
   if (cat && cat !== 'all') list = list.filter((f) => f.cat === cat)
-  if (!kw) return list.slice()
+  if (!kw) {
+    // 浏览「全部」时家常菜靠前，避免被食材淹没
+    if (!cat || cat === 'all') {
+      const dishes = list.filter((f) => f.cat === 'dish')
+      const others = list.filter((f) => f.cat !== 'dish')
+      return dishes.concat(others)
+    }
+    return list.slice()
+  }
   return list.filter((f) => {
     const blob = (f.name + ' ' + (f.aliases || '')).toLowerCase()
     return blob.indexOf(kw) >= 0
@@ -1533,10 +1745,19 @@ function scaleNutrition(food, grams) {
   }
 }
 
+const DATA_NOTE = {
+  unit: 'per 100g',
+  ingredient: 'approx public composition values; typical +/-10-15%',
+  dish: 'home-recipe average; oil/sauce +/-20-40%',
+  alcohol: 'kcal includes ethanol; macros alone undercount',
+  use: 'diet diary estimate only'
+}
+
 module.exports = {
   FOOD_CATS,
   FOODS,
   FOOD_MAP,
+  DATA_NOTE,
   searchFoods,
   getFoodById,
   scaleNutrition

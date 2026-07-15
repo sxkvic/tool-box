@@ -34,7 +34,7 @@
     <view class="search-box">
       <input
         class="input search-input"
-        placeholder="搜索食物，如 鸡胸肉 / 米饭"
+        placeholder="搜索家常菜或食材，如 番茄炒蛋 / 米饭"
         value="{{keyword}}"
         bindinput="onKeyword"
         confirm-type="search"
@@ -74,7 +74,7 @@
       </view>
     </block>
 
-    <view class="section-label">{{keyword ? '搜索结果' : '食物库'}} · {{list.length}}</view>
+    <view class="section-label">{{keyword ? '搜索结果' : (cat === 'dish' ? '家常菜' : (cat === 'all' ? '家常菜优先 · 全部' : '食物库'))}} · {{list.length}}</view>
     <view class="food-list" wx:if="{{list.length}}">
       <view
         class="food-item"
@@ -164,5 +164,5 @@
     </view>
   </block>
 
-  <view class="disclaimer">营养数据为本地估算，按每100g比例换算，仅供参考。</view>
+  <view class="disclaimer">营养为本地估算：食材较准，家常菜受用油影响大，仅供日记参考。</view>
 </view>
