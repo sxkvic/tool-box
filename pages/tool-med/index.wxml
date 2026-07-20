@@ -1,0 +1,327 @@
+<page-meta
+  background-text-style="{{bgTextStyle}}"
+  background-color="{{chromeBg}}"
+  root-background-color="{{chromeBg}}"
+  page-style="background-color: {{chromeBg}}; {{sheetOn ? 'overflow: hidden;' : ''}}"
+/>
+<app-nav-bar
+  title="健康记录"
+  theme="{{theme}}"
+  background="{{navBg}}"
+  color="{{navFront}}"
+  left="back"
+/>
+<view class="container theme-{{theme}} med-page">
+  <quota-bar free="{{true}}" />
+
+  <!-- 成员 + 快捷记录（简约） -->
+  <view class="card hero-card">
+    <view class="hero-top">
+      <view class="hero-left">
+        <view class="hero-count" wx:if="{{currentPerson}}">{{currentPerson.name}}</view>
+        <view class="hero-count" wx:else>健康记录</view>
+        <view class="hero-sub" wx:if="{{currentPerson}}">
+          {{currentPerson.ageText}} · {{currentPerson.genderText}}
+          · 用药 {{currentPerson.medCount}} · 体温 {{currentPerson.tempCount}}
+        </view>
+        <view class="hero-sub" wx:else>先添加成员，再记用药与体温</view>
+      </view>
+      <view class="more-link" bindtap="openPersonSheet" hover-class="more-link-hover">
+        {{persons.length ? '添加' : '添加成员'}}
+      </view>
+    </view>
+
+    <scroll-view class="person-scroll" scroll-x wx:if="{{persons.length}}" enable-flex>
+      <view
+        class="person-chip {{currentPersonId === item.id ? 'on' : ''}}"
+        wx:for="{{persons}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        data-index="{{index}}"
+        bindtap="onSelectPerson"
+        bindlongpress="onPersonSetDefault"
+      >
+        <text>{{item.name}}</text>
+        <text class="person-chip-tag" wx:if="{{index === 0}}"> 默认</text>
+        <text class="person-chip-due" wx:elif="{{item.dueCount}}"> ·{{item.dueCount}}</text>
+      </view>
+    </scroll-view>
+    <view class="person-hint" wx:if="{{persons.length > 1}}">长按成员可设为默认（排到首位）</view>
+
+    <view class="hero-actions" wx:if="{{currentPerson}}">
+      <view class="hero-action" bindtap="openMedSheet" hover-class="hero-action-hover">记用药</view>
+      <view class="hero-action-sep"></view>
+      <view class="hero-action" bindtap="openTempSheet" hover-class="hero-action-hover">记体温</view>
+    </view>
+  </view>
+
+  <!-- 当前成员下的记录 -->
+  <block wx:if="{{currentPerson}}">
+    <!-- 用药：主页最多 3 条，按天分组 -->
+    <view class="card med-section">
+      <view class="card-title-row">
+        <view class="card-title" style="margin-bottom:0;">用药 · {{medCount}}</view>
+        <view
+          class="more-link"
+          wx:if="{{medCount}}"
+          bindtap="goMedMore"
+          hover-class="more-link-hover"
+        >更多</view>
+      </view>
+      <block wx:if="{{medPreviewGroups.length}}">
+        <block wx:for="{{medPreviewGroups}}" wx:key="date" wx:for-item="day">
+          <view class="day-line">
+            <text class="day-line-t">{{day.dateLabel}}</text>
+          </view>
+          <view class="med-row" wx:for="{{day.items}}" wx:key="id" wx:for-item="item">
+            <view class="med-row-top">
+              <text class="med-name">{{item.medicineName}}</text>
+              <text class="med-del-text" data-id="{{item.id}}" catchtap="onDeleteMed">删除</text>
+            </view>
+            <view class="med-remain {{item.remainDue ? (item.remainOverdue ? 'danger' : 'warn') : ''}}">{{item.remainText}}</view>
+            <view class="med-line">{{item.timeOnly}} · 每 {{item.intervalText}}</view>
+            <view class="med-line mute">下次 {{item.nextDoseText}}</view>
+            <view class="med-advice" wx:if="{{item.advice}}">{{item.advice}}</view>
+          </view>
+        </block>
+        <view class="more-plain" wx:if="{{medHasMore}}" bindtap="goMedMore">查看全部 {{medCount}} 条 ›</view>
+      </block>
+      <view class="section-tip empty-inline" wx:else>还没有用药，点上方「记用药」</view>
+    </view>
+
+    <!-- 体温图 + 最近 5 条（按日分组） -->
+    <view class="card">
+      <view class="card-title-row">
+        <view class="card-title" style="margin-bottom:0;">体温 · {{tempCount}}</view>
+        <view class="sort-tabs" wx:if="{{tempCount}}">
+          <view
+            class="sort-tab {{tempSort === 'desc' ? 'on' : ''}}"
+            data-order="desc"
+            bindtap="onSetTempSort"
+          >倒序</view>
+          <view
+            class="sort-tab {{tempSort === 'asc' ? 'on' : ''}}"
+            data-order="asc"
+            bindtap="onSetTempSort"
+          >升序</view>
+        </view>
+      </view>
+      <view class="temp-legend" wx:if="{{tempCount}}">
+        <text class="legend-item temp-normal">＜37.5</text>
+        <text class="legend-item temp-fever">37.5–38.5</text>
+        <text class="legend-item temp-high">＞38.5</text>
+      </view>
+      <view class="chart-wrap">
+        <canvas
+          canvas-id="tempChart"
+          class="chart-canvas"
+          style="width: {{chartW}}px; height: {{chartH}}px;"
+        ></canvas>
+      </view>
+      <view class="section-tip chart-empty-tip" wx:if="{{!tempCount}}">
+        还没有体温，点上方「记体温」
+      </view>
+      <block wx:if="{{tempPreviewGroups.length}}">
+        <block wx:for="{{tempPreviewGroups}}" wx:key="date" wx:for-item="day">
+          <view class="day-line">
+            <text class="day-line-t">{{day.dateLabel}}</text>
+          </view>
+          <view class="temp-item" wx:for="{{day.items}}" wx:key="id" wx:for-item="item">
+            <view class="temp-val {{item.levelClass}}">{{item.value}}°</view>
+            <view class="temp-mid">
+              <view class="temp-time">{{item.timeOnly}} · {{item.levelLabel}}</view>
+            </view>
+            <text class="temp-del-text" data-id="{{item.id}}" bindtap="onDeleteTemp">删除</text>
+          </view>
+        </block>
+        <view class="more-plain" wx:if="{{tempHasMore}}" bindtap="goTempMore">查看全部 {{tempCount}} 条 ›</view>
+      </block>
+    </view>
+
+    <view class="footer-del" bindtap="onDeletePerson">删除成员「{{currentPerson.name}}」</view>
+  </block>
+
+  <view class="ad-slot"><ad-banner /></view>
+</view>
+
+<!-- 添加/编辑成员 -->
+<view
+  class="sheet-mask theme-{{theme}}"
+  bindtap="closeSheet"
+  catchtouchmove="preventMove"
+  wx:if="{{sheetOn && sheetKind === 'person'}}"
+></view>
+<view
+  class="sheet theme-{{theme}} on"
+  style="bottom: {{keyboardHeight}}px; max-height: {{sheetMaxHeight}};"
+  wx:if="{{sheetOn && sheetKind === 'person'}}"
+>
+  <view class="sheet-handle"></view>
+  <view class="sheet-title">添加成员</view>
+  <view class="sheet-body">
+    <view class="sheet-field">
+      <text class="sheet-label">姓名</text>
+      <input
+        class="input"
+        placeholder="例如：小明"
+        value="{{formPersonName}}"
+        bindinput="onPersonName"
+        maxlength="20"
+        focus="{{personFocus}}"
+        adjust-position="{{false}}"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
+    </view>
+    <view class="field-row">
+      <view class="field-col sheet-field">
+        <text class="sheet-label">年龄</text>
+        <input
+          class="input"
+          type="digit"
+          placeholder="岁"
+          value="{{formAge}}"
+          bindinput="onAge"
+          adjust-position="{{false}}"
+          bindkeyboardheightchange="onKeyboardHeight"
+        />
+      </view>
+      <view class="field-col sheet-field">
+        <text class="sheet-label">性别</text>
+        <picker mode="selector" range="{{genderOptions}}" range-key="label" value="{{formGenderIndex}}" bindchange="onGender">
+          <view class="picker-value">{{formGenderLabel}} ▾</view>
+        </picker>
+      </view>
+    </view>
+  </view>
+  <view class="sheet-actions">
+    <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
+    <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onSavePerson">保存成员</view>
+  </view>
+</view>
+
+<!-- 记用药：不再填姓名 -->
+<view
+  class="sheet-mask theme-{{theme}}"
+  bindtap="closeSheet"
+  catchtouchmove="preventMove"
+  wx:if="{{sheetOn && sheetKind === 'med'}}"
+></view>
+<view
+  class="sheet theme-{{theme}} on"
+  style="bottom: {{keyboardHeight}}px; max-height: {{sheetMaxHeight}};"
+  wx:if="{{sheetOn && sheetKind === 'med'}}"
+>
+  <view class="sheet-handle"></view>
+  <view class="sheet-title">记用药</view>
+  <view class="sheet-body">
+    <view class="section-tip sheet-belong" wx:if="{{currentPerson}}">归属：{{currentPerson.name}}</view>
+    <view class="sheet-field">
+      <text class="sheet-label">药品名称</text>
+      <input
+        class="input"
+        placeholder="例如：布洛芬"
+        value="{{formMedicine}}"
+        bindinput="onMedicine"
+        maxlength="40"
+        adjust-position="{{false}}"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
+    </view>
+    <view class="sheet-field">
+      <text class="sheet-label">医嘱（可选）</text>
+      <textarea
+        class="textarea advice-input"
+        placeholder="例如：饭后服用、每日三次、多喝水"
+        value="{{formAdvice}}"
+        bindinput="onAdvice"
+        maxlength="200"
+        auto-height
+        adjust-position="{{false}}"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
+    </view>
+    <view class="sheet-field">
+      <text class="sheet-label">吃药时间</text>
+      <view class="field-row">
+        <view class="field-col">
+          <picker mode="date" value="{{formDate}}" bindchange="onDate">
+            <view class="picker-value">{{formDate}} ▾</view>
+          </picker>
+        </view>
+        <view class="field-col">
+          <picker mode="time" value="{{formTime}}" bindchange="onTime">
+            <view class="picker-value">{{formTime}} ▾</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+    <view class="sheet-field sheet-field-last">
+      <text class="sheet-label">间隔（小时）</text>
+      <input
+        class="input"
+        type="digit"
+        placeholder="例如 8"
+        value="{{formInterval}}"
+        bindinput="onInterval"
+        adjust-position="{{false}}"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
+      <view class="section-tip field-tip">剩余多久 = 吃药时间 + 间隔 − 当前时间</view>
+    </view>
+  </view>
+  <view class="sheet-actions">
+    <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
+    <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onAddMed">保存</view>
+  </view>
+</view>
+
+<!-- 记体温：不再填姓名 -->
+<view
+  class="sheet-mask theme-{{theme}}"
+  bindtap="closeSheet"
+  catchtouchmove="preventMove"
+  wx:if="{{sheetOn && sheetKind === 'temp'}}"
+></view>
+<view
+  class="sheet theme-{{theme}} on"
+  style="bottom: {{keyboardHeight}}px; max-height: {{sheetMaxHeight}};"
+  wx:if="{{sheetOn && sheetKind === 'temp'}}"
+>
+  <view class="sheet-handle"></view>
+  <view class="sheet-title">记体温</view>
+  <view class="sheet-body">
+    <view class="section-tip sheet-belong" wx:if="{{currentPerson}}">归属：{{currentPerson.name}}</view>
+    <view class="sheet-field">
+      <text class="sheet-label">体温 ℃</text>
+      <input
+        class="input"
+        type="digit"
+        placeholder="例如 36.5"
+        value="{{formTemp}}"
+        bindinput="onTempInput"
+        focus="{{tempFocus}}"
+        adjust-position="{{false}}"
+        bindkeyboardheightchange="onKeyboardHeight"
+      />
+    </view>
+    <view class="sheet-field sheet-field-last">
+      <text class="sheet-label">测量时间</text>
+      <view class="field-row">
+        <view class="field-col">
+          <picker mode="date" value="{{formTempDate}}" bindchange="onTempDate">
+            <view class="picker-value">{{formTempDate}} ▾</view>
+          </picker>
+        </view>
+        <view class="field-col">
+          <picker mode="time" value="{{formTempTime}}" bindchange="onTempTime">
+            <view class="picker-value">{{formTempTime}} ▾</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="sheet-actions">
+    <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
+    <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onAddTemp">保存</view>
+  </view>
+</view>

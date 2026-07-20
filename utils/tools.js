@@ -13,6 +13,16 @@ const BASE_TOOLS = [
     keywords: '体重 减肥 增肌 bmi 体脂 健康 目标 记录 趋势'
   },
   {
+    id: 'med',
+    code: 'L-00b',
+    name: '健康记录',
+    desc: '用药体温与服药剩余提醒',
+    icon: 'med',
+    path: '/pages/tool-med/index',
+    category: 'life',
+    keywords: '健康 吃药 用药 药品 体温 间隔 剩余 感冒 发烧 服药 记录'
+  },
+  {
     id: 'food',
     code: 'L-01',
     name: '今天吃什么',
@@ -170,7 +180,7 @@ const CATEGORIES = [
     code: '01',
     title: '生活决策',
     en: 'LIFE DECISIONS',
-    desc: '体重、饮食、抽签与称呼'
+    desc: '体重、健康、饮食、抽签与称呼'
   },
   {
     id: 'efficiency',

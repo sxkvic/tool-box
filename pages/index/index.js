@@ -210,5 +210,27 @@ Page({
       duration: 900
     })
     this.refreshLists(this.data.keyword)
+  },
+
+  onRemoveRecent(e) {
+    const id = e.currentTarget.dataset.id
+    if (!id) return
+    recentsUtil.removeRecent(id)
+    this.refreshLists(this.data.keyword)
+  },
+
+  onClearRecents() {
+    if (!this.data.recentTools || !this.data.recentTools.length) return
+    const self = this
+    wx.showModal({
+      title: '清空最近使用',
+      content: '确定清空全部最近使用记录？',
+      success(res) {
+        if (!res.confirm) return
+        recentsUtil.clearRecents()
+        self.refreshLists(self.data.keyword)
+        wx.showToast({ title: '已清空', icon: 'none' })
+      }
+    })
   }
 })

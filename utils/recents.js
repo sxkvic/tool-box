@@ -24,6 +24,20 @@ function pushRecent(id) {
   return next
 }
 
+/** 从最近使用中移除一项 */
+function removeRecent(id) {
+  if (!id) return getRecents()
+  const next = getRecents().filter((x) => x !== id)
+  storage.set(RECENT_KEY, next)
+  return next
+}
+
+/** 清空最近使用 */
+function clearRecents() {
+  storage.set(RECENT_KEY, [])
+  return []
+}
+
 function isFavorite(id) {
   return getFavorites().indexOf(id) >= 0
 }
@@ -48,6 +62,8 @@ module.exports = {
   getRecents,
   getFavorites,
   pushRecent,
+  removeRecent,
+  clearRecents,
   isFavorite,
   toggleFavorite,
   setFavorites

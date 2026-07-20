@@ -919,6 +919,59 @@
   white-space: nowrap;
 }
 
+.section-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex-shrink: 0;
+}
+
+.section-link {
+  font-size: 22rpx;
+  color: var(--text-muted, #5a6478);
+  padding: 6rpx 4rpx;
+  letter-spacing: 1rpx;
+}
+
+.section-link:active {
+  color: #ff5c7a;
+}
+
+.recent-del {
+  margin-left: 2rpx;
+  width: 32rpx;
+  height: 32rpx;
+  line-height: 28rpx;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #5a6478;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.recent-del-hover {
+  color: #ff5c7a;
+  background: rgba(255, 92, 122, 0.12);
+}
+
+.page.theme-light .section-link {
+  color: #94a3b8;
+}
+
+.page.theme-light .section-link:active {
+  color: #e11d48;
+}
+
+.page.theme-light .recent-del {
+  color: #94a3b8;
+}
+
+.page.theme-light .recent-del-hover {
+  color: #e11d48;
+  background: rgba(225, 29, 72, 0.08);
+}
+
 .fav-btn {
   margin-left: 4rpx;
   font-size: 22rpx;

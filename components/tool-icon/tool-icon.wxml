@@ -114,13 +114,20 @@
     <view class="f check-line check-l2"></view>
   </block>
 
-  
-    <block wx:elif="{{name === 'weight'}}">
+  <block wx:elif="{{name === 'weight'}}">
     <view class="s scale-base"></view>
     <view class="f scale-dial"></view>
     <view class="f scale-needle"></view>
     <view class="f scale-foot scale-foot-l"></view>
     <view class="f scale-foot scale-foot-r"></view>
+  </block>
+
+  <block wx:elif="{{name === 'med'}}">
+    <view class="s pill-body"></view>
+    <view class="f pill-split"></view>
+    <view class="f pill-dot pill-d1"></view>
+    <view class="f pill-dot pill-d2"></view>
+    <view class="f pill-dot pill-d3"></view>
   </block>
 
   <block wx:else>

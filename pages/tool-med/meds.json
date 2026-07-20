@@ -1,0 +1,10 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "用药明细",
+  "navigationBarBackgroundColor": "#05070c",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#05070c",
+  "usingComponents": {
+    "app-nav-bar": "/components/app-nav-bar/app-nav-bar"
+  }
+}

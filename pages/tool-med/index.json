@@ -1,0 +1,12 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "健康记录",
+  "navigationBarBackgroundColor": "#05070c",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#05070c",
+  "usingComponents": {
+    "ad-banner": "/components/ad-banner/ad-banner",
+    "quota-bar": "/components/quota-bar/quota-bar",
+    "app-nav-bar": "/components/app-nav-bar/app-nav-bar"
+  }
+}
