@@ -1,0 +1,9 @@
+{
+  "name": "toolbox-miniprogram",
+  "version": "1.0.0",
+  "description": "随身工具箱微信小程序",
+  "private": true,
+  "dependencies": {
+    "@vant/weapp": "^1.11.7"
+  }
+}

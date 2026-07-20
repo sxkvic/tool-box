@@ -342,6 +342,13 @@
   font-size: 22rpx;
 }
 
+.chart-placeholder {
+  width: 100%;
+  margin-top: 8rpx;
+  border-radius: 12rpx;
+  background: rgba(255, 255, 255, 0.02);
+}
+
 .temp-preview-label {
   margin-top: 18rpx;
   margin-bottom: 8rpx;
@@ -579,30 +586,63 @@
   box-shadow: 0 6rpx 18rpx rgba(92, 225, 255, 0.22);
 }
 
-/* sheet · 对齐体重页 */
-.sheet-mask {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  z-index: 999;
+/* 覆盖 Vant 默认布局；底色由 sheetPopupStyle 按主题注入 */
+.med-van-popup {
+  overflow: hidden !important;
 }
 
-.sheet {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
+/* Vant Popup 内容区 · 延续 Mission Control 深空样式 */
+.sheet-inner {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #121a2c, #0a101c);
-  border-radius: 28rpx 28rpx 0 0;
-  padding: 16rpx 28rpx 0;
-  border: 1rpx solid rgba(255, 255, 255, 0.08);
-  border-bottom: none;
   max-height: 85vh;
-  overflow: hidden;
+  min-height: 40vh;
+  padding: 8rpx 28rpx 0;
   box-sizing: border-box;
+  background: transparent;
+  color: #f4f7ff;
+}
+
+/* 弹层内输入框：不依赖 page 变量（组件树里 var 可能失效） */
+.sheet-inner .input,
+.sheet-inner .textarea,
+.sheet-inner .picker-value {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  color: #f4f7ff;
+  box-sizing: border-box;
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
+}
+
+.sheet-inner .input {
+  height: 84rpx;
+  padding: 0 24rpx;
+}
+
+.sheet-inner .textarea {
+  min-height: 140rpx;
+  padding: 20rpx 24rpx;
+  line-height: 1.6;
+}
+
+.sheet-inner .picker-value {
+  height: 84rpx;
+  line-height: 84rpx;
+  padding: 0 24rpx;
+}
+
+.sheet-inner .section-tip,
+.sheet-inner .field-tip {
+  color: #8b95ad;
+  font-size: 22rpx;
+}
+
+.sheet-inner .sheet-belong {
+  color: #5ce1ff !important;
+  font-weight: 600;
+  margin-bottom: 16rpx !important;
 }
 
 .sheet-handle {
@@ -610,14 +650,14 @@
   height: 8rpx;
   border-radius: 999rpx;
   background: rgba(255, 255, 255, 0.18);
-  margin: 4rpx auto 18rpx;
+  margin: 8rpx auto 18rpx;
 }
 
 .sheet-title {
   font-size: 32rpx;
   font-weight: 700;
   margin-bottom: 20rpx;
-  color: var(--text);
+  color: #f4f7ff;
 }
 
 .sheet-field {
@@ -627,7 +667,7 @@
 .sheet-label {
   display: block;
   font-size: 22rpx;
-  color: var(--text-secondary);
+  color: #8b95ad;
   margin-bottom: 10rpx;
 }
 
@@ -636,6 +676,7 @@
   min-height: 0;
   overflow-y: auto;
   padding-bottom: 8rpx;
+  -webkit-overflow-scrolling: touch;
 }
 
 .sheet-field-last {
@@ -645,11 +686,10 @@
 .sheet-actions {
   display: flex;
   align-items: stretch;
-  gap: 20rpx;
+  gap: 16rpx;
   flex-shrink: 0;
-  margin-top: 4rpx;
-  padding: 20rpx 0 calc(28rpx + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, transparent, rgba(5, 7, 12, 0.55) 28%);
+  margin-top: 8rpx;
+  padding: 16rpx 0 24rpx;
   border-top: 1rpx solid rgba(255, 255, 255, 0.06);
 }
 
@@ -658,8 +698,8 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  height: 92rpx;
-  border-radius: 18rpx;
+  height: 88rpx;
+  border-radius: 16rpx;
   font-size: 28rpx;
   font-weight: 700;
   letter-spacing: 2rpx;
@@ -668,14 +708,12 @@
   position: relative;
 }
 
-/* 取消：青描边幽灵，次要 */
 .sheet-btn-cancel {
   flex: 0 0 28%;
   max-width: 200rpx;
   color: #c5d0e6;
   background: rgba(255, 255, 255, 0.04);
   border: 1rpx solid rgba(92, 225, 255, 0.22);
-  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.05);
 }
 
 .sheet-btn-hover {
@@ -684,7 +722,6 @@
   color: #5ce1ff !important;
 }
 
-/* 保存：主 CTA，占主宽度 */
 .sheet-btn-save {
   flex: 1 1 auto;
   min-width: 0;
@@ -693,28 +730,60 @@
   border: none;
   box-shadow:
     0 0 0 1rpx rgba(92, 225, 255, 0.35),
-    0 10rpx 28rpx rgba(92, 225, 255, 0.28),
-    inset 0 1rpx 0 rgba(255, 255, 255, 0.9);
-}
-
-.sheet-btn-save::before {
-  content: '';
-  position: absolute;
-  left: 12%;
-  right: 12%;
-  top: 0;
-  height: 2rpx;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
-  pointer-events: none;
+    0 8rpx 22rpx rgba(92, 225, 255, 0.22),
+    inset 0 1rpx 0 rgba(255, 255, 255, 0.85);
 }
 
 .sheet-btn-save-hover {
   opacity: 0.92;
-  transform: scale(0.985) translateY(1rpx);
-  box-shadow:
-    0 0 0 1rpx rgba(92, 225, 255, 0.28),
-    0 4rpx 14rpx rgba(92, 225, 255, 0.18),
-    inset 0 1rpx 0 rgba(255, 255, 255, 0.85) !important;
+  transform: scale(0.985);
+}
+
+/* light 弹层内容 */
+.sheet-inner.theme-light {
+  color: #0f172a;
+}
+
+.sheet-inner.theme-light .sheet-title {
+  color: #0f172a;
+}
+
+.sheet-inner.theme-light .sheet-label,
+.sheet-inner.theme-light .section-tip,
+.sheet-inner.theme-light .field-tip {
+  color: #64748b;
+}
+
+.sheet-inner.theme-light .input,
+.sheet-inner.theme-light .textarea,
+.sheet-inner.theme-light .picker-value {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #e2e8f0;
+}
+
+.sheet-inner.theme-light .sheet-handle {
+  background: rgba(15, 23, 42, 0.12);
+}
+
+.sheet-inner.theme-light .sheet-actions {
+  border-top-color: #eef2f7;
+}
+
+.sheet-inner.theme-light .sheet-btn-cancel {
+  color: #475569;
+  background: #ffffff;
+  border: 1rpx solid #e2e8f0;
+}
+
+.sheet-inner.theme-light .sheet-btn-save {
+  color: #ffffff;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 8rpx 20rpx rgba(37, 99, 235, 0.25);
+}
+
+.sheet-inner.theme-light .sheet-belong {
+  color: #2563eb !important;
 }
 
 /* light */
@@ -857,44 +926,4 @@
   color: #2563eb;
 }
 
-.sheet.theme-light,
-.theme-light.sheet {
-  background: linear-gradient(180deg, #ffffff, #f5f7fb);
-  border-color: #e2e8f0;
-}
 
-.sheet.theme-light .sheet-handle,
-.theme-light.sheet .sheet-handle {
-  background: rgba(15, 23, 42, 0.12);
-}
-
-.sheet.theme-light .sheet-actions,
-.theme-light.sheet .sheet-actions {
-  background: linear-gradient(180deg, transparent, rgba(245, 247, 251, 0.95) 30%);
-  border-top-color: #eef2f7;
-}
-
-.sheet.theme-light .sheet-btn-cancel,
-.theme-light.sheet .sheet-btn-cancel {
-  color: #475569;
-  background: #ffffff;
-  border: 1rpx solid #e2e8f0;
-  box-shadow: 0 4rpx 12rpx rgba(15, 23, 42, 0.04);
-}
-
-.sheet.theme-light .sheet-btn-hover,
-.theme-light.sheet .sheet-btn-hover {
-  background: #eff6ff !important;
-  border-color: #93c5fd !important;
-  color: #2563eb !important;
-}
-
-.sheet.theme-light .sheet-btn-save,
-.theme-light.sheet .sheet-btn-save {
-  color: #ffffff;
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
-  box-shadow:
-    0 0 0 1rpx rgba(37, 99, 235, 0.25),
-    0 10rpx 24rpx rgba(37, 99, 235, 0.28),
-    inset 0 1rpx 0 rgba(255, 255, 255, 0.35);
-}

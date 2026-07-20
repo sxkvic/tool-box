@@ -2,7 +2,7 @@
   background-text-style="{{bgTextStyle}}"
   background-color="{{chromeBg}}"
   root-background-color="{{chromeBg}}"
-  page-style="background-color: {{chromeBg}}; {{sheetOn ? 'overflow: hidden;' : ''}}"
+  page-style="background-color: {{chromeBg}}; {{sheetShow ? 'overflow: hidden;' : ''}}"
 />
 <app-nav-bar
   title="健康记录"
@@ -78,9 +78,9 @@
               <text class="med-name">{{item.medicineName}}</text>
               <text class="med-del-text" data-id="{{item.id}}" catchtap="onDeleteMed">删除</text>
             </view>
-            <view class="med-remain {{item.remainDue ? (item.remainOverdue ? 'danger' : 'warn') : ''}}">{{item.remainText}}</view>
-            <view class="med-line">{{item.timeOnly}} · 每 {{item.intervalText}}</view>
-            <view class="med-line mute">下次 {{item.nextDoseText}}</view>
+            <view class="med-remain {{item.remainDue ? (item.remainOverdue ? 'danger' : 'warn') : ''}}" wx:if="{{item.intervalHours}}">{{item.remainText}}</view>
+            <view class="med-line">{{item.timeOnly}}<text wx:if="{{item.intervalHours}}"> · 每 {{item.intervalText}}</text></view>
+            <view class="med-line mute" wx:if="{{item.intervalHours}}">下次 {{item.nextDoseText}}</view>
             <view class="med-advice" wx:if="{{item.advice}}">{{item.advice}}</view>
           </view>
         </block>
@@ -111,13 +111,15 @@
         <text class="legend-item temp-fever">37.5–38.5</text>
         <text class="legend-item temp-high">＞38.5</text>
       </view>
-      <view class="chart-wrap">
+      <!-- 弹层打开时卸载 canvas：原生 canvas 层级高于 fixed 弹层，网格线会穿出 -->
+      <view class="chart-wrap" wx:if="{{!sheetShow}}">
         <canvas
           canvas-id="tempChart"
           class="chart-canvas"
           style="width: {{chartW}}px; height: {{chartH}}px;"
         ></canvas>
       </view>
+      <view class="chart-wrap chart-placeholder" wx:else style="height: {{chartH}}px;"></view>
       <view class="section-tip chart-empty-tip" wx:if="{{!tempCount}}">
         还没有体温，点上方「记体温」
       </view>
@@ -144,184 +146,187 @@
   <view class="ad-slot"><ad-banner /></view>
 </view>
 
-<!-- 添加/编辑成员 -->
-<view
-  class="sheet-mask theme-{{theme}}"
-  bindtap="closeSheet"
-  catchtouchmove="preventMove"
-  wx:if="{{sheetOn && sheetKind === 'person'}}"
-></view>
-<view
-  class="sheet theme-{{theme}} on"
-  style="bottom: {{keyboardHeight}}px; max-height: {{sheetMaxHeight}};"
-  wx:if="{{sheetOn && sheetKind === 'person'}}"
+<!-- Vant Popup 底部弹层 -->
+<van-popup
+  show="{{sheetShow}}"
+  position="bottom"
+  round
+  close-on-click-overlay
+  safe-area-inset-bottom
+  z-index="{{1100}}"
+  duration="{{280}}"
+  custom-class="med-van-popup"
+  custom-style="{{sheetPopupStyle}}"
+  overlay-style="background-color: rgba(0,0,0,0.55);"
+  bind:close="closeSheet"
+  bind:after-leave="onSheetAfterLeave"
 >
-  <view class="sheet-handle"></view>
-  <view class="sheet-title">添加成员</view>
-  <view class="sheet-body">
-    <view class="sheet-field">
-      <text class="sheet-label">姓名</text>
-      <input
-        class="input"
-        placeholder="例如：小明"
-        value="{{formPersonName}}"
-        bindinput="onPersonName"
-        maxlength="20"
-        focus="{{personFocus}}"
-        adjust-position="{{false}}"
-        bindkeyboardheightchange="onKeyboardHeight"
-      />
-    </view>
-    <view class="field-row">
-      <view class="field-col sheet-field">
-        <text class="sheet-label">年龄</text>
-        <input
-          class="input"
-          type="digit"
-          placeholder="岁"
-          value="{{formAge}}"
-          bindinput="onAge"
-          adjust-position="{{false}}"
-          bindkeyboardheightchange="onKeyboardHeight"
-        />
-      </view>
-      <view class="field-col sheet-field">
-        <text class="sheet-label">性别</text>
-        <picker mode="selector" range="{{genderOptions}}" range-key="label" value="{{formGenderIndex}}" bindchange="onGender">
-          <view class="picker-value">{{formGenderLabel}} ▾</view>
-        </picker>
-      </view>
-    </view>
-  </view>
-  <view class="sheet-actions">
-    <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
-    <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onSavePerson">保存成员</view>
-  </view>
-</view>
+  <view class="sheet-inner theme-{{theme}}">
+    <view class="sheet-handle"></view>
 
-<!-- 记用药：不再填姓名 -->
-<view
-  class="sheet-mask theme-{{theme}}"
-  bindtap="closeSheet"
-  catchtouchmove="preventMove"
-  wx:if="{{sheetOn && sheetKind === 'med'}}"
-></view>
-<view
-  class="sheet theme-{{theme}} on"
-  style="bottom: {{keyboardHeight}}px; max-height: {{sheetMaxHeight}};"
-  wx:if="{{sheetOn && sheetKind === 'med'}}"
->
-  <view class="sheet-handle"></view>
-  <view class="sheet-title">记用药</view>
-  <view class="sheet-body">
-    <view class="section-tip sheet-belong" wx:if="{{currentPerson}}">归属：{{currentPerson.name}}</view>
-    <view class="sheet-field">
-      <text class="sheet-label">药品名称</text>
-      <input
-        class="input"
-        placeholder="例如：布洛芬"
-        value="{{formMedicine}}"
-        bindinput="onMedicine"
-        maxlength="40"
-        adjust-position="{{false}}"
-        bindkeyboardheightchange="onKeyboardHeight"
-      />
-    </view>
-    <view class="sheet-field">
-      <text class="sheet-label">医嘱（可选）</text>
-      <textarea
-        class="textarea advice-input"
-        placeholder="例如：饭后服用、每日三次、多喝水"
-        value="{{formAdvice}}"
-        bindinput="onAdvice"
-        maxlength="200"
-        auto-height
-        adjust-position="{{false}}"
-        bindkeyboardheightchange="onKeyboardHeight"
-      />
-    </view>
-    <view class="sheet-field">
-      <text class="sheet-label">吃药时间</text>
-      <view class="field-row">
-        <view class="field-col">
-          <picker mode="date" value="{{formDate}}" bindchange="onDate">
-            <view class="picker-value">{{formDate}} ▾</view>
-          </picker>
+    <!-- 添加成员 -->
+    <block wx:if="{{sheetKind === 'person'}}">
+      <view class="sheet-title">添加成员</view>
+      <view class="sheet-body">
+        <view class="sheet-field">
+          <text class="sheet-label">姓名</text>
+          <input
+            class="input"
+            placeholder="例如：小明"
+            value="{{formPersonName}}"
+            bindinput="onPersonName"
+            maxlength="20"
+            hold-keyboard="{{true}}"
+            cursor-spacing="32"
+            adjust-position="{{false}}"
+            bindblur="onSheetFieldBlur"
+            bindkeyboardheightchange="onKeyboardHeight"
+          />
         </view>
-        <view class="field-col">
-          <picker mode="time" value="{{formTime}}" bindchange="onTime">
-            <view class="picker-value">{{formTime}} ▾</view>
-          </picker>
+        <view class="field-row">
+          <view class="field-col sheet-field">
+            <text class="sheet-label">年龄</text>
+            <input
+              class="input"
+              type="digit"
+              placeholder="岁"
+              value="{{formAge}}"
+              bindinput="onAge"
+              hold-keyboard="{{true}}"
+              cursor-spacing="32"
+              adjust-position="{{false}}"
+              bindblur="onSheetFieldBlur"
+              bindkeyboardheightchange="onKeyboardHeight"
+            />
+          </view>
+          <view class="field-col sheet-field">
+            <text class="sheet-label">性别</text>
+            <picker mode="selector" range="{{genderOptions}}" range-key="label" value="{{formGenderIndex}}" bindchange="onGender">
+              <view class="picker-value">{{formGenderLabel}} ▾</view>
+            </picker>
+          </view>
         </view>
       </view>
-    </view>
-    <view class="sheet-field sheet-field-last">
-      <text class="sheet-label">间隔（小时）</text>
-      <input
-        class="input"
-        type="digit"
-        placeholder="例如 8"
-        value="{{formInterval}}"
-        bindinput="onInterval"
-        adjust-position="{{false}}"
-        bindkeyboardheightchange="onKeyboardHeight"
-      />
-      <view class="section-tip field-tip">剩余多久 = 吃药时间 + 间隔 − 当前时间</view>
-    </view>
-  </view>
-  <view class="sheet-actions">
-    <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
-    <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onAddMed">保存</view>
-  </view>
-</view>
+      <view class="sheet-actions">
+        <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
+        <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onSavePerson">保存成员</view>
+      </view>
+    </block>
 
-<!-- 记体温：不再填姓名 -->
-<view
-  class="sheet-mask theme-{{theme}}"
-  bindtap="closeSheet"
-  catchtouchmove="preventMove"
-  wx:if="{{sheetOn && sheetKind === 'temp'}}"
-></view>
-<view
-  class="sheet theme-{{theme}} on"
-  style="bottom: {{keyboardHeight}}px; max-height: {{sheetMaxHeight}};"
-  wx:if="{{sheetOn && sheetKind === 'temp'}}"
->
-  <view class="sheet-handle"></view>
-  <view class="sheet-title">记体温</view>
-  <view class="sheet-body">
-    <view class="section-tip sheet-belong" wx:if="{{currentPerson}}">归属：{{currentPerson.name}}</view>
-    <view class="sheet-field">
-      <text class="sheet-label">体温 ℃</text>
-      <input
-        class="input"
-        type="digit"
-        placeholder="例如 36.5"
-        value="{{formTemp}}"
-        bindinput="onTempInput"
-        focus="{{tempFocus}}"
-        adjust-position="{{false}}"
-        bindkeyboardheightchange="onKeyboardHeight"
-      />
-    </view>
-    <view class="sheet-field sheet-field-last">
-      <text class="sheet-label">测量时间</text>
-      <view class="field-row">
-        <view class="field-col">
-          <picker mode="date" value="{{formTempDate}}" bindchange="onTempDate">
-            <view class="picker-value">{{formTempDate}} ▾</view>
-          </picker>
+    <!-- 记用药 -->
+    <block wx:elif="{{sheetKind === 'med'}}">
+      <view class="sheet-title">记用药</view>
+      <view class="sheet-body">
+        <view class="section-tip sheet-belong" wx:if="{{currentPerson}}">归属：{{currentPerson.name}}</view>
+        <view class="sheet-field">
+          <text class="sheet-label">药品名称</text>
+          <input
+            class="input"
+            placeholder="例如：布洛芬"
+            value="{{formMedicine}}"
+            bindinput="onMedicine"
+            maxlength="40"
+            hold-keyboard="{{true}}"
+            cursor-spacing="32"
+            adjust-position="{{false}}"
+            bindblur="onSheetFieldBlur"
+            bindkeyboardheightchange="onKeyboardHeight"
+          />
         </view>
-        <view class="field-col">
-          <picker mode="time" value="{{formTempTime}}" bindchange="onTempTime">
-            <view class="picker-value">{{formTempTime}} ▾</view>
-          </picker>
+        <view class="sheet-field">
+          <text class="sheet-label">医嘱（可选）</text>
+          <textarea
+            class="textarea advice-input"
+            placeholder="例如：饭后服用、每日三次、多喝水"
+            value="{{formAdvice}}"
+            bindinput="onAdvice"
+            maxlength="200"
+            auto-height
+            hold-keyboard="{{true}}"
+            cursor-spacing="32"
+            adjust-position="{{false}}"
+            bindblur="onSheetFieldBlur"
+            bindkeyboardheightchange="onKeyboardHeight"
+          />
+        </view>
+        <view class="sheet-field">
+          <text class="sheet-label">吃药时间</text>
+          <view class="field-row">
+            <view class="field-col">
+              <picker mode="date" value="{{formDate}}" bindchange="onDate">
+                <view class="picker-value">{{formDate}} ▾</view>
+              </picker>
+            </view>
+            <view class="field-col">
+              <picker mode="time" value="{{formTime}}" bindchange="onTime">
+                <view class="picker-value">{{formTime}} ▾</view>
+              </picker>
+            </view>
+          </view>
+        </view>
+        <view class="sheet-field sheet-field-last">
+          <text class="sheet-label">间隔（小时，可选）</text>
+          <input
+            class="input"
+            type="digit"
+            placeholder="可不填；填写后可算下次服药时间"
+            value="{{formInterval}}"
+            bindinput="onInterval"
+            hold-keyboard="{{true}}"
+            cursor-spacing="32"
+            adjust-position="{{false}}"
+            bindblur="onSheetFieldBlur"
+            bindkeyboardheightchange="onKeyboardHeight"
+          />
         </view>
       </view>
-    </view>
+      <view class="sheet-actions">
+        <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
+        <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onAddMed">保存</view>
+      </view>
+    </block>
+
+    <!-- 记体温 -->
+    <block wx:elif="{{sheetKind === 'temp'}}">
+      <view class="sheet-title">记体温</view>
+      <view class="sheet-body">
+        <view class="section-tip sheet-belong" wx:if="{{currentPerson}}">归属：{{currentPerson.name}}</view>
+        <view class="sheet-field">
+          <text class="sheet-label">体温 ℃</text>
+          <input
+            class="input"
+            type="digit"
+            placeholder="例如 36.5"
+            value="{{formTemp}}"
+            bindinput="onTempInput"
+            focus="{{tempFocus}}"
+            hold-keyboard="{{true}}"
+            cursor-spacing="32"
+            adjust-position="{{false}}"
+            bindblur="onSheetFieldBlur"
+            bindkeyboardheightchange="onKeyboardHeight"
+          />
+        </view>
+        <view class="sheet-field sheet-field-last">
+          <text class="sheet-label">测量时间</text>
+          <view class="field-row">
+            <view class="field-col">
+              <picker mode="date" value="{{formTempDate}}" bindchange="onTempDate">
+                <view class="picker-value">{{formTempDate}} ▾</view>
+              </picker>
+            </view>
+            <view class="field-col">
+              <picker mode="time" value="{{formTempTime}}" bindchange="onTempTime">
+                <view class="picker-value">{{formTempTime}} ▾</view>
+              </picker>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="sheet-actions">
+        <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
+        <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onAddTemp">保存</view>
+      </view>
+    </block>
   </view>
-  <view class="sheet-actions">
-    <view class="sheet-btn sheet-btn-cancel" hover-class="sheet-btn-hover" hover-stay-time="80" bindtap="closeSheet">取消</view>
-    <view class="sheet-btn sheet-btn-save" hover-class="sheet-btn-save-hover" hover-stay-time="80" bindtap="onAddTemp">保存</view>
-  </view>
-</view>
+</van-popup>

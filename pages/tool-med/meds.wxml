@@ -49,9 +49,9 @@
           <text class="med-name">{{item.medicineName}}</text>
           <text class="med-del-text" data-id="{{item.id}}" catchtap="onDeleteMed">删除</text>
         </view>
-        <view class="med-remain {{item.remainDue ? (item.remainOverdue ? 'danger' : 'warn') : ''}}">{{item.remainText}}</view>
-        <view class="med-line">{{item.timeOnly}} · 每 {{item.intervalText}}</view>
-        <view class="med-line mute">下次 {{item.nextDoseText}}</view>
+        <view class="med-remain {{item.remainDue ? (item.remainOverdue ? 'danger' : 'warn') : ''}}" wx:if="{{item.intervalHours}}">{{item.remainText}}</view>
+        <view class="med-line">{{item.timeOnly}}<text wx:if="{{item.intervalHours}}"> · 每 {{item.intervalText}}</text></view>
+        <view class="med-line mute" wx:if="{{item.intervalHours}}">下次 {{item.nextDoseText}}</view>
         <view class="med-advice" wx:if="{{item.advice}}">{{item.advice}}</view>
       </view>
     </view>

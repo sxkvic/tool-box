@@ -60,14 +60,26 @@ clearStore()
   // med payload must not require personName
   ok(!('personName' in mRes.med) || mRes.med.personName === undefined, 'med has no personName field')
 
-  med.save(mRes.state)
+  // 间隔可不填
+  const noInt = med.addMed(mRes.state, {
+    personId,
+    medicineName: '维生素',
+    doseTime: Date.now(),
+    intervalHours: null
+  })
+  ok(noInt.ok, 'addMed without interval')
+  ok(noInt.med.intervalHours == null, 'interval null ok')
+
+  med.save(noInt.state)
   const loaded = med.load()
   ok(loaded.persons.length === 1, 'one person')
   ok(loaded.persons[0].name === '小明', 'person name')
   ok(loaded.persons[0].age === 28, 'person age')
-  ok(loaded.meds.length === 1, 'one med')
-  ok(loaded.meds[0].personId === personId, 'loaded med personId')
-  ok(loaded.meds[0].advice === '饭后服用，多喝水', 'advice load/save')
+  ok(loaded.meds.length === 2, 'two meds')
+  const withAdvice = loaded.meds.find((m) => m.medicineName === '布洛芬')
+  ok(withAdvice && withAdvice.personId === personId, 'loaded med personId')
+  ok(withAdvice.advice === '饭后服用，多喝水', 'advice load/save')
+  ok(loaded.meds.some((m) => m.medicineName === '维生素' && m.intervalHours == null), 'optional interval load')
   ok(med.normalizeAdvice('  a  ') === 'a', 'advice trim')
 }
 

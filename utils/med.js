@@ -56,6 +56,8 @@ function parseAge(v) {
 }
 
 function parseIntervalHours(v) {
+  // 可选：空不填
+  if (v === null || v === undefined || v === '') return null
   const n = Number(v)
   if (!Number.isFinite(n) || n <= 0 || n > 24 * 365) return null
   return Math.round(n * 100) / 100
@@ -107,10 +109,9 @@ function normalizeMed(m) {
   const medicineName = String(m.medicineName || m.medicine || '').trim().slice(0, 40)
   if (!personId || !medicineName) return null
   const doseTime = Number(m.doseTime) || Number(m.ts) || Date.now()
-  const intervalHours = parseIntervalHours(
-    m.intervalHours != null ? m.intervalHours : m.interval
-  )
-  if (intervalHours == null) return null
+  // 间隔可选；空/非法视为 null，不再拒绝整条用药
+  const intervalRaw = m.intervalHours != null ? m.intervalHours : m.interval
+  const intervalHours = parseIntervalHours(intervalRaw)
   // 医嘱：饭后服用、每日三次等，可选
   const advice = normalizeAdvice(m.advice != null ? m.advice : m.doctorAdvice)
   return {
@@ -119,7 +120,7 @@ function normalizeMed(m) {
     medicineName,
     advice,
     doseTime,
-    intervalHours,
+    intervalHours: intervalHours == null ? null : intervalHours,
     createdAt: Number(m.createdAt) || doseTime,
     doseTimeText: formatDateTime(doseTime)
   }
@@ -180,17 +181,14 @@ function migrateLegacy(raw) {
     const person = ensurePerson(r.personName || r.name, r.age, r.gender)
     if (!person) return
     const medicineName = String(r.medicineName || r.medicine || '').trim()
-    const intervalHours = parseIntervalHours(
-      r.intervalHours != null ? r.intervalHours : r.interval
-    )
-    if (medicineName && intervalHours != null) {
+    if (medicineName) {
       const med = normalizeMed({
         id: r.id || uid('m'),
         personId: person.id,
         medicineName,
         advice: r.advice != null ? r.advice : r.doctorAdvice,
         doseTime: r.doseTime || r.ts,
-        intervalHours,
+        intervalHours: r.intervalHours != null ? r.intervalHours : r.interval,
         createdAt: r.createdAt
       })
       if (med) meds.push(med)
@@ -625,7 +623,10 @@ function decoratePerson(person, state, now) {
   const s = normalizeState(state)
   const meds = s.meds.filter((m) => m.personId === person.id)
   const temps = s.temps.filter((t) => t.personId === person.id)
-  const dueCount = meds.filter((m) => calcRemaining(m.doseTime, m.intervalHours, now).due).length
+  const dueCount = meds.filter((m) => {
+    if (m.intervalHours == null) return false
+    return calcRemaining(m.doseTime, m.intervalHours, now).due
+  }).length
   return Object.assign({}, person, {
     genderText: genderLabel(person.gender),
     ageText: person.age != null ? `${person.age}岁` : '--',
@@ -637,10 +638,20 @@ function decoratePerson(person, state, now) {
 
 function decorateMed(med, now) {
   if (!med) return null
-  const remain = calcRemaining(med.doseTime, med.intervalHours, now)
+  const hasInterval = med.intervalHours != null && Number(med.intervalHours) > 0
+  const remain = hasInterval
+    ? calcRemaining(med.doseTime, med.intervalHours, now)
+    : {
+        remainingMs: 0,
+        nextDoseTime: 0,
+        overdue: false,
+        due: false,
+        text: '--',
+        shortText: '--'
+      }
   const date = formatDate(med.doseTime)
   return Object.assign({}, med, {
-    intervalText: `${med.intervalHours} 小时`,
+    intervalText: hasInterval ? `${med.intervalHours} 小时` : '--',
     remainText: remain.text,
     remainShort: remain.shortText,
     remainDue: remain.due,

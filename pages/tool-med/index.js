@@ -89,17 +89,18 @@ Page({
       formAdvice: '',
       formDate: parts.date,
       formTime: parts.time,
-      formInterval: '8',
+      formInterval: '',
 
       formTemp: '',
       formTempDate: tParts.date,
       formTempTime: tParts.time,
       tempFocus: false,
 
-      sheetOn: false,
+      sheetShow: false,
       sheetKind: '',
       keyboardHeight: 0,
-      sheetMaxHeight: '85vh',
+      sheetPopupStyle:
+        'background: linear-gradient(180deg, #121a2c 0%, #0a101c 100%); max-height: 85vh; overflow: hidden; padding: 0;',
 
       chartW: 300,
       chartH: 160
@@ -121,18 +122,19 @@ Page({
     this.syncTheme()
     this.refresh()
     this.startRemainTimer()
+    this._bindKeyboardListener()
   },
 
   onHide() {
     this.stopRemainTimer()
+    this._unbindKeyboardListener()
   },
 
   onUnload() {
     this.stopRemainTimer()
-    if (this._focusTimer) {
-      clearTimeout(this._focusTimer)
-      this._focusTimer = null
-    }
+    this._unbindKeyboardListener()
+    this._clearFocusTimer()
+    this._clearKbFallbackTimer()
   },
 
   onShareAppMessage() {
@@ -156,7 +158,8 @@ Page({
         chromeBg: chrome.chromeBg,
         navBg: chrome.navBg,
         navFront: chrome.navFront,
-        bgTextStyle: chrome.bgTextStyle
+        bgTextStyle: chrome.bgTextStyle,
+        sheetPopupStyle: this._sheetPopupStyle(this.data.keyboardHeight || 0)
       })
     } else {
       themeUtil.applyChrome(id)
@@ -259,10 +262,13 @@ Page({
     const self = this
     const h = self.data.chartH || 160
     if (!self.data.currentPerson) return
+    // 弹层打开时 canvas 已卸载，不绘制
+    if (self.data.sheetShow) return
     wx.createSelectorQuery()
       .in(this)
       .select('.chart-wrap')
       .boundingClientRect((rect) => {
+        if (self.data.sheetShow) return
         let w = rect && rect.width ? Math.floor(rect.width) : 0
         if (!w) {
           try {
@@ -284,7 +290,7 @@ Page({
   },
 
   drawChart(w, h) {
-    if (!this.data.currentPerson) return
+    if (!this.data.currentPerson || this.data.sheetShow) return
     // 必须用该成员全部体温（升序），与列表「最多 5 条」无关
     let series = this.data.chartSeries
     if (!Array.isArray(series) || !series.length) {
@@ -332,12 +338,103 @@ Page({
 
   preventMove() {},
 
-  onKeyboardHeight(e) {
-    const h = (e && e.detail && e.detail.height) || 0
+  _clearFocusTimer() {
+    if (this._focusTimer) {
+      clearTimeout(this._focusTimer)
+      this._focusTimer = null
+    }
+  },
+
+  _clearKbFallbackTimer() {
+    if (this._kbFallbackTimer) {
+      clearTimeout(this._kbFallbackTimer)
+      this._kbFallbackTimer = null
+    }
+  },
+
+  /** van-popup 内联样式：深色底 + 限高 + 键盘抬升，延续 Mission Control */
+  _sheetPopupStyle(keyboardHeight) {
+    const h = Math.max(0, Number(keyboardHeight) || 0)
+    const theme = this.data.theme || 'mc'
+    const bg =
+      theme === 'light'
+        ? 'linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%)'
+        : 'linear-gradient(180deg, #121a2c 0%, #0a101c 100%)'
+    let maxH = '85vh'
+    try {
+      const sys = wx.getSystemInfoSync() || {}
+      const winH = sys.windowHeight || 0
+      if (winH > 0) {
+        maxH = Math.max(240, Math.floor(winH * 0.88 - h)) + 'px'
+      }
+    } catch (e) {}
+    // 覆盖 Vant 默认白底，保持圆角与项目深空风格
+    return [
+      'background: ' + bg + ' !important',
+      'background-color: transparent !important',
+      'max-height: ' + maxH,
+      'bottom: ' + h + 'px',
+      'overflow: hidden',
+      'padding: 0',
+      'box-sizing: border-box',
+      'border-radius: 24px 24px 0 0'
+    ].join(';')
+  },
+
+  _applyKeyboardHeight(h) {
+    if (!this.data.sheetShow) return
+    const next = Math.max(0, Number(h) || 0)
+    if (next === this.data.keyboardHeight) return
     this.setData({
-      keyboardHeight: h,
-      sheetMaxHeight: h > 0 ? '70vh' : '85vh'
+      keyboardHeight: next,
+      sheetPopupStyle: this._sheetPopupStyle(next)
     })
+  },
+
+  /** 全局键盘高度（真机比 input 的 keyboardheightchange 更稳） */
+  _bindKeyboardListener() {
+    if (this._kbBound) return
+    if (typeof wx.onKeyboardHeightChange !== 'function') return
+    this._kbHandler = (res) => {
+      if (!this.data.sheetShow) return
+      this._applyKeyboardHeight(res && res.height)
+    }
+    try {
+      wx.onKeyboardHeightChange(this._kbHandler)
+      this._kbBound = true
+    } catch (e) {}
+  },
+
+  _unbindKeyboardListener() {
+    if (!this._kbBound) return
+    try {
+      if (typeof wx.offKeyboardHeightChange === 'function' && this._kbHandler) {
+        wx.offKeyboardHeightChange(this._kbHandler)
+      }
+    } catch (e) {}
+    this._kbBound = false
+    this._kbHandler = null
+  },
+
+  onKeyboardHeight(e) {
+    if (!this.data.sheetShow) return
+    const h = (e && e.detail && e.detail.height) || 0
+    this._applyKeyboardHeight(h)
+  },
+
+  /**
+   * 失焦兜底：真机部分机型收起键盘不回调 height=0。
+   * 延迟稍长，避免在「姓名→年龄」切换输入框时误回落。
+   */
+  onSheetFieldBlur() {
+    this._clearKbFallbackTimer()
+    this._kbFallbackTimer = setTimeout(() => {
+      if (!this.data.sheetShow) return
+      // 若期间全局监听已把高度置 0，则无需处理
+      if (this.data.keyboardHeight <= 0) return
+      // 仍抬着但已无键盘事件时，强制回落
+      this._applyKeyboardHeight(0)
+    }, 360)
   },
 
   onSelectPerson(e) {
@@ -364,21 +461,37 @@ Page({
     })
   },
 
+  /**
+   * 打开 Vant 底部弹层（动画由 van-popup 负责）
+   */
+  _openSheet(kind, extra) {
+    this._clearFocusTimer()
+    this._clearKbFallbackTimer()
+    try {
+      wx.hideKeyboard()
+    } catch (e) {}
+    const base = Object.assign(
+      {
+        sheetShow: true,
+        sheetKind: kind,
+        keyboardHeight: 0,
+        sheetPopupStyle: this._sheetPopupStyle(0),
+        tempFocus: false,
+        personFocus: false
+      },
+      extra || {}
+    )
+    this.setData(base)
+  },
+
   openPersonSheet() {
-    this.setData({
-      sheetOn: true,
-      sheetKind: 'person',
-      keyboardHeight: 0,
-      sheetMaxHeight: '85vh',
+    this._openSheet('person', {
       formPersonName: '',
       formAge: '',
       formGender: 'male',
       formGenderIndex: 0,
-      formGenderLabel: '男',
-      personFocus: false
+      formGenderLabel: '男'
     })
-    if (this._focusTimer) clearTimeout(this._focusTimer)
-    this._focusTimer = setTimeout(() => this.setData({ personFocus: true }), 200)
   },
 
   openMedSheet() {
@@ -387,16 +500,12 @@ Page({
       return
     }
     const parts = defaultDoseParts()
-    this.setData({
-      sheetOn: true,
-      sheetKind: 'med',
-      keyboardHeight: 0,
-      sheetMaxHeight: '85vh',
+    this._openSheet('med', {
       formMedicine: '',
       formAdvice: '',
       formDate: parts.date,
       formTime: parts.time,
-      formInterval: '8'
+      formInterval: ''
     })
   },
 
@@ -406,29 +515,38 @@ Page({
       return
     }
     const tParts = defaultDoseParts()
-    this.setData({
-      sheetOn: true,
-      sheetKind: 'temp',
-      keyboardHeight: 0,
-      sheetMaxHeight: '85vh',
+    this._openSheet('temp', {
       formTemp: '',
       formTempDate: tParts.date,
       formTempTime: tParts.time,
       tempFocus: false
     })
-    if (this._focusTimer) clearTimeout(this._focusTimer)
-    this._focusTimer = setTimeout(() => this.setData({ tempFocus: true }), 200)
+    // 等 van-popup 进场后再聚焦
+    this._focusTimer = setTimeout(() => {
+      if (!this.data.sheetShow || this.data.sheetKind !== 'temp') return
+      this.setData({ tempFocus: true })
+    }, 320)
   },
 
   closeSheet() {
+    this._clearFocusTimer()
+    this._clearKbFallbackTimer()
+    try {
+      wx.hideKeyboard()
+    } catch (e) {}
     this.setData({
-      sheetOn: false,
-      sheetKind: '',
+      sheetShow: false,
       keyboardHeight: 0,
-      sheetMaxHeight: '85vh',
+      sheetPopupStyle: this._sheetPopupStyle(0),
       tempFocus: false,
       personFocus: false
     })
+  },
+
+  /** van-popup 离场动画结束：恢复 canvas */
+  onSheetAfterLeave() {
+    this.setData({ sheetKind: '' })
+    setTimeout(() => this.measureAndDraw(), 30)
   },
 
   onPersonName(e) {
@@ -513,10 +631,15 @@ Page({
       wx.showToast({ title: '请填写药品名称', icon: 'none' })
       return
     }
-    const intervalHours = medHub.parseIntervalHours(this.data.formInterval)
-    if (intervalHours == null) {
-      wx.showToast({ title: '间隔需为正数小时', icon: 'none' })
-      return
+    // 间隔可选；有填则校验为正数小时
+    const intervalRaw = (this.data.formInterval || '').trim()
+    let intervalHours = null
+    if (intervalRaw !== '') {
+      intervalHours = medHub.parseIntervalHours(intervalRaw)
+      if (intervalHours == null) {
+        wx.showToast({ title: '间隔需为正数小时', icon: 'none' })
+        return
+      }
     }
     const doseTime = parseDoseParts(this.data.formDate, this.data.formTime)
     const advice = (this.data.formAdvice || '').trim()
